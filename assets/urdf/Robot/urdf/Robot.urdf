@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="Robot">
+  <link
+    name="body">
+    <inertial>
+      <origin
+        xyz="-0.0500009669256068 -0.0500182495832519 0.0164726789535921"
+        rpy="0 0 0" />
+      <mass
+        value="0.440618738122415" />
+      <inertia
+        ixx="0.000393480475203283"
+        ixy="-1.68095672529994E-10"
+        ixz="2.7571591832562E-09"
+        iyy="0.000397942731290007"
+        iyz="-5.33273059309594E-09"
+        izz="0.000672030111990303" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Robot/meshes/body.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Robot/meshes/body.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="servo1r">
+    <inertial>
+      <origin
+        xyz="2.9811117204518E-05 -0.0346910121894034 -0.000509969127238143"
+        rpy="0 0 0" />
+      <mass
+        value="0.0213682467147692" />
+      <inertia
+        ixx="3.25958248565221E-06"
+        ixy="-2.6663652965489E-09"
+        ixz="-8.41577076327905E-11"
+        iyy="1.04298724915849E-06"
+        iyz="1.37857959164003E-09"
+        izz="2.70162820946051E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Robot/meshes/servo1r.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Robot/meshes/servo1r.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="hipr"
+    type="revolute">
+    <origin
+      xyz="-0.01 -0.0503 -0.028856"
+      rpy="1.5708 0 0" />
+    <parent
+      link="body" />
+    <child
+      link="servo1r" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-1.5708"
+      upper="1.5708"
+      effort="0.00003666666"
+      velocity="6.3355" />
+  </joint>
+  <link
+    name="servo2r">
+    <inertial>
+      <origin
+        xyz="0.000308287765976075 -0.0349560457002559 -0.000227414690784293"
+        rpy="0 0 0" />
+      <mass
+        value="0.0209718184775166" />
+      <inertia
+        ixx="3.14944361251738E-06"
+        ixy="-2.66636529654846E-09"
+        ixz="-8.2890928161181E-11"
+        iyy="1.08188083399424E-06"
+        iyz="1.37857959164005E-09"
+        izz="2.6855511067329E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Robot/meshes/servo2r.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Robot/meshes/servo2r.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="kneer"
+    type="revolute">
+    <origin
+      xyz="-0.0002445 -0.047416 -0.0005"
+      rpy="0 0 0" />
+    <parent
+      link="servo1r" />
+    <child
+      link="servo2r" />
+    <axis
+      xyz="1 0 0" />
+    <limit
+      lower="-1.5708"
+      upper="1.5708"
+      effort="0.00003666666"
+      velocity="6.3355" />
+  </joint>
+  <link
+    name="servo3r">
+    <inertial>
+      <origin
+        xyz="0.000499999999999957 -0.0318535758246183 -0.000278857670887457"
+        rpy="0 0 0" />
+      <mass
+        value="0.0270492776837368" />
+      <inertia
+        ixx="2.99555999408966E-06"
+        ixy="1.96538113542599E-21"
+        ixz="1.098713610612E-13"
+        iyy="4.01264032869482E-06"
+        iyz="1.01539178048609E-22"
+        izz="4.01992442491195E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Robot/meshes/servo3r.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Robot/meshes/servo3r.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="ankler"
+    type="revolute">
+    <origin
+      xyz="0 -0.047416 -0.0002555"
+      rpy="0 0 0" />
+    <parent
+      link="servo2r" />
+    <child
+      link="servo3r" />
+    <axis
+      xyz="1 0 0" />
+    <limit
+      lower="-1.5708"
+      upper="1.5708"
+      effort="0.00003666666"
+      velocity="6.3355" />
+  </joint>
+  <link
+    name="servo1l">
+    <inertial>
+      <origin
+        xyz="2.98111172045978E-05 -0.0346910121894034 -0.000509969127238136"
+        rpy="0 0 0" />
+      <mass
+        value="0.0213682467147692" />
+      <inertia
+        ixx="3.25958248565221E-06"
+        ixy="-2.66636529654381E-09"
+        ixz="-8.41577076327276E-11"
+        iyy="1.04298724915849E-06"
+        iyz="1.37857959163981E-09"
+        izz="2.70162820946052E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Robot/meshes/servo1l.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Robot/meshes/servo1l.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="hipl"
+    type="revolute">
+    <origin
+      xyz="-0.09 -0.0507 -0.028856"
+      rpy="1.5708 0 0" />
+    <parent
+      link="body" />
+    <child
+      link="servo1l" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-1.5708"
+      upper="1.5708"
+      effort="0.00003666666"
+      velocity="6.3355" />
+  </joint>
+  <link
+    name="servo2l">
+    <inertial>
+      <origin
+        xyz="0.000308287765976134 -0.0349560457002559 -0.000227414690784286"
+        rpy="0 0 0" />
+      <mass
+        value="0.0209718184775166" />
+      <inertia
+        ixx="3.14944361251738E-06"
+        ixy="-2.66636529654411E-09"
+        ixz="-8.28909281612219E-11"
+        iyy="1.08188083399425E-06"
+        iyz="1.3785795916394E-09"
+        izz="2.6855511067329E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Robot/meshes/servo2l.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Robot/meshes/servo2l.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="kneel"
+    type="revolute">
+    <origin
+      xyz="-0.0002445 -0.047416 -0.0005"
+      rpy="0 0 0" />
+    <parent
+      link="servo1l" />
+    <child
+      link="servo2l" />
+    <axis
+      xyz="1 0 0" />
+    <limit
+      lower="-1.5708"
+      upper="1.5708"
+      effort="0.00003666666"
+      velocity="6.3355" />
+  </joint>
+  <link
+    name="servo3l">
+    <inertial>
+      <origin
+        xyz="0.000500000000000042 -0.0318535758246183 -0.000278857670887485"
+        rpy="0 0 0" />
+      <mass
+        value="0.0270492776837368" />
+      <inertia
+        ixx="2.99555999408966E-06"
+        ixy="-5.62482816536059E-22"
+        ixz="1.09871360789062E-13"
+        iyy="4.01264032869482E-06"
+        iyz="-1.7293200504976E-23"
+        izz="4.01992442491194E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Robot/meshes/servo3l.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Robot/meshes/servo3l.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="anklel"
+    type="revolute">
+    <origin
+      xyz="0 -0.047416 -0.0002555"
+      rpy="0 0 0" />
+    <parent
+      link="servo2l" />
+    <child
+      link="servo3l" />
+    <axis
+      xyz="1 0 0" />
+    <limit
+      lower="-1.5708"
+      upper="1.5708"
+      effort="0.00003666666"
+      velocity="6.3355" />
+  </joint>
+</robot>
