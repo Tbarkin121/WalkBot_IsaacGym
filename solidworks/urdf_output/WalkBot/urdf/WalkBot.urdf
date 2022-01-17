@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="WalkBot">
+  <link
+    name="Body">
+    <inertial>
+      <origin
+        xyz="-8.18143322954485E-07 -0.00273725053593522 1.54414926855463E-05"
+        rpy="0 0 0" />
+      <mass
+        value="0.520746828527768" />
+      <inertia
+        ixx="0.000471200271899893"
+        ixy="2.75715918327776E-09"
+        ixz="1.68094478378987E-10"
+        iyy="0.000983833686042757"
+        iyz="5.33273059310087E-09"
+        izz="0.000654120958475656" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://WalkBot/meshes/Body.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://WalkBot/meshes/Body.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="Servo1_Left">
+    <inertial>
+      <origin
+        xyz="-0.000174801090539752 -0.0318010030269155 4.77793358522098E-05"
+        rpy="0 0 0" />
+      <mass
+        value="0.0230007365895397" />
+      <inertia
+        ixx="3.38038527155297E-06"
+        ixy="-2.66636375431696E-09"
+        ixz="-8.41838748724252E-11"
+        iyy="1.0750315407539E-06"
+        iyz="1.38032437966027E-09"
+        izz="2.85194124414614E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://WalkBot/meshes/Servo1_Left.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://WalkBot/meshes/Servo1_Left.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="hip_L"
+    type="revolute">
+    <origin
+      xyz="0.05 -0.048627 0"
+      rpy="0 0 0" />
+    <parent
+      link="Body" />
+    <child
+      link="Servo1_Left" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-1.5708"
+      upper="1.5708"
+      effort="0.52"
+      velocity="10.89" />
+  </joint>
+  <link
+    name="Servo2_Left">
+    <inertial>
+      <origin
+        xyz="0.000119825452782725 -0.0319962115408565 9.42400447890564E-06"
+        rpy="0 0 0" />
+      <mass
+        value="0.0226043083522871" />
+      <inertia
+        ixx="3.27436167088693E-06"
+        ixy="2.66462050852749E-09"
+        ixz="-8.2916261923325E-11"
+        iyy="1.11333471633782E-06"
+        iyz="-1.37857804941055E-09"
+        izz="2.83878279589868E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://WalkBot/meshes/Servo2_Left.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://WalkBot/meshes/Servo2_Left.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="knee_L"
+    type="revolute">
+    <origin
+      xyz="0 -0.047416 0"
+      rpy="0 0 0" />
+    <parent
+      link="Servo1_Left" />
+    <child
+      link="Servo2_Left" />
+    <axis
+      xyz="-1 0 0" />
+    <limit
+      lower="-1.5708"
+      upper="1.5708"
+      effort="0.52"
+      velocity="10.89" />
+  </joint>
+  <link
+    name="Servo3_Left">
+    <inertial>
+      <origin
+        xyz="8.1489270938824E-05 -0.0246574562466223 2.80851151131857E-09"
+        rpy="0 0 0" />
+      <mass
+        value="0.0161002375604621" />
+      <inertia
+        ixx="1.7994604546192E-06"
+        ixy="1.24376478011898E-12"
+        ixz="6.80558849839486E-14"
+        iyy="1.23532312259261E-06"
+        iyz="-1.41793132365097E-13"
+        izz="1.4738916006442E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://WalkBot/meshes/Servo3_Left.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://WalkBot/meshes/Servo3_Left.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="ankle_L"
+    type="revolute">
+    <origin
+      xyz="0 -0.047416 0"
+      rpy="0 0 0" />
+    <parent
+      link="Servo2_Left" />
+    <child
+      link="Servo3_Left" />
+    <axis
+      xyz="1 0 0" />
+    <limit
+      lower="-1.5708"
+      upper="1.5708"
+      effort="0.52"
+      velocity="10.89" />
+  </joint>
+  <link
+    name="Servo1_Right">
+    <inertial>
+      <origin
+        xyz="-0.000174801090539772 -0.0318010030269155 4.77793358522135E-05"
+        rpy="0 0 0" />
+      <mass
+        value="0.0230007365895397" />
+      <inertia
+        ixx="3.38038527155297E-06"
+        ixy="-2.66636375431739E-09"
+        ixz="-8.41838748724468E-11"
+        iyy="1.0750315407539E-06"
+        iyz="1.38032437966052E-09"
+        izz="2.85194124414614E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://WalkBot/meshes/Servo1_Right.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://WalkBot/meshes/Servo1_Right.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="hip_R"
+    type="revolute">
+    <origin
+      xyz="-0.05 -0.048627 0"
+      rpy="0 0 0" />
+    <parent
+      link="Body" />
+    <child
+      link="Servo1_Right" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-1.5708"
+      upper="1.5708"
+      effort="0.52"
+      velocity="10.89" />
+  </joint>
+  <link
+    name="Servo2_Right">
+    <inertial>
+      <origin
+        xyz="0.000119825452782711 -0.0319962115408565 9.4240044789052E-06"
+        rpy="0 0 0" />
+      <mass
+        value="0.0226043083522871" />
+      <inertia
+        ixx="3.27436167088693E-06"
+        ixy="2.66462050852724E-09"
+        ixz="-8.29162619234425E-11"
+        iyy="1.11333471633782E-06"
+        iyz="-1.37857804941046E-09"
+        izz="2.83878279589868E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://WalkBot/meshes/Servo2_Right.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://WalkBot/meshes/Servo2_Right.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="knee_R"
+    type="revolute">
+    <origin
+      xyz="0 -0.047416 0"
+      rpy="0 0 0" />
+    <parent
+      link="Servo1_Right" />
+    <child
+      link="Servo2_Right" />
+    <axis
+      xyz="-1 0 0" />
+    <limit
+      lower="-1.5708"
+      upper="1.5708"
+      effort="0.52"
+      velocity="10.89" />
+  </joint>
+  <link
+    name="Servo3_Right">
+    <inertial>
+      <origin
+        xyz="8.1489270938831E-05 -0.0246574562466223 2.80851151649957E-09"
+        rpy="0 0 0" />
+      <mass
+        value="0.0161002375604621" />
+      <inertia
+        ixx="1.7994604546192E-06"
+        ixy="1.24376477999561E-12"
+        ixz="6.80558850505018E-14"
+        iyy="1.23532312259261E-06"
+        iyz="-1.41793132265574E-13"
+        izz="1.4738916006442E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://WalkBot/meshes/Servo3_Right.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://WalkBot/meshes/Servo3_Right.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="ankle_R"
+    type="revolute">
+    <origin
+      xyz="0 -0.047416 0"
+      rpy="0 0 0" />
+    <parent
+      link="Servo2_Right" />
+    <child
+      link="Servo3_Right" />
+    <axis
+      xyz="1 0 0" />
+    <limit
+      lower="-1.5708"
+      upper="1.5708"
+      effort="0.52"
+      velocity="10.89" />
+  </joint>
+</robot>
