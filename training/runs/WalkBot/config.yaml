@@ -17,10 +17,10 @@ task:
       - 0.0
       - 0.25
       rot:
-      - 1.0
+      - 0.7071
       - 0.0
       - 0.0
-      - 1.0
+      - 0.7071
       vLinear:
       - 0.0
       - 0.0
@@ -37,7 +37,7 @@ task:
     upWeight: 0.1
     dofVelocityScale: 0.2
     deathCost: -2.0
-    terminationHeight: 0.15
+    terminationHeight: 0.1
   sim:
     dt: 0.0166
     substeps: 2
@@ -128,7 +128,7 @@ train:
       bounds_loss_coef: 0.0001
 task_name: ${task.name}
 experiment: ''
-num_envs: ''
+num_envs: 2
 seed: 42
 torch_deterministic: false
 max_iterations: ''
@@ -140,7 +140,7 @@ graphics_device_id: 0
 num_threads: 4
 solver_type: 1
 num_subscenes: 4
-test: false
-checkpoint: ''
+test: true
+checkpoint: /home/tyler/MachineLearning/isaac/projects/WalkBot_IsaacGym/training/runs/WalkBot_M330/nn/WalkBot_M330.pth
 multi_gpu: false
 headless: false

@@ -21,7 +21,7 @@ env:
 
   baseInitState:
     pos: [0.0, 0.0, .25] # x,y,z [m]
-    rot: [1.0, 0.0, 0.0, 1.0] # x,y,z,w [quat]
+    rot: [0.7071, 0.0, 0.0, 0.7071] # x,y,z,w [quat]
     vLinear: [0.0, 0.0, 0.0]  # x,y,z [m/s]
     vAngular: [0.0, 0.0, 0.0]  # x,y,z [rad/s]
 
@@ -37,7 +37,7 @@ env:
   # cost parameters
   dofVelocityScale: 0.2
   deathCost: -2.0
-  terminationHeight: 0.15
+  terminationHeight: 0.10
 
 sim:
   dt: 0.0166 # 1/60 s

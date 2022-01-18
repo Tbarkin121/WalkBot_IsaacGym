@@ -5,20 +5,20 @@
 <robot
   name="WalkBot">
   <link
-    name="body">
+    name="Body">
     <inertial>
       <origin
-        xyz="-9.66925606769864E-07 -0.00329829865280169 1.82495832519378E-05"
+        xyz="-8.1814E-07 -0.0027373 1.5441E-05"
         rpy="0 0 0" />
       <mass
-        value="0.440618738122415" />
+        value="0.52075" />
       <inertia
-        ixx="0.000393480475203283"
-        ixy="2.75715918325615E-09"
-        ixz="1.68095672530006E-10"
-        iyy="0.000672030111990303"
-        iyz="5.33273059311417E-09"
-        izz="0.000397942731290007" />
+        ixx="0.0004712"
+        ixy="2.7572E-09"
+        ixz="1.6809E-10"
+        iyy="0.00098383"
+        iyz="5.3327E-09"
+        izz="0.00065412" />
     </inertial>
     <visual>
       <origin
@@ -26,12 +26,12 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/body.STL" />
+          filename="../meshes/Body.STL" />
       </geometry>
       <material
         name="">
         <color
-          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+          rgba="0.79216 0.81961 0.93333 1" />
       </material>
     </visual>
     <collision>
@@ -40,25 +40,25 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/body.STL" />
+          filename="../meshes/Body.STL" />
       </geometry>
     </collision>
   </link>
   <link
-    name="servo1r">
+    name="Servo1_Left">
     <inertial>
       <origin
-        xyz="2.9811117204518E-05 -0.0346910121894035 -0.000509969127238129"
+        xyz="0.000174801119477867 -0.0318010030269155 6.63024617987469E-05"
         rpy="0 0 0" />
       <mass
-        value="0.0213682467147692" />
+        value="0.0230007365895397" />
       <inertia
-        ixx="3.25958248565221E-06"
-        ixy="-2.66636529654879E-09"
-        ixz="-8.41577076328632E-11"
-        iyy="1.04298724915849E-06"
-        iyz="1.37857959164E-09"
-        izz="2.70162820946051E-06" />
+        ixx="3.38038527155296E-06"
+        ixy="2.66636683877595E-09"
+        ixz="-8.41838748724041E-11"
+        iyy="1.0750315407539E-06"
+        iyz="-1.3768348036188E-09"
+        izz="2.85194124414614E-06" />
     </inertial>
     <visual>
       <origin
@@ -66,7 +66,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/servo1r.STL" />
+          filename="../meshes/Servo1_Left.STL" />
       </geometry>
       <material
         name="">
@@ -80,43 +80,43 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/servo1r.STL" />
+          filename="../meshes/Servo1_Left.STL" />
       </geometry>
     </collision>
   </link>
   <joint
-    name="hipr"
+    name="hip_L"
     type="revolute">
     <origin
-      xyz="0.04 -0.048627 0.0003"
+      xyz="0.05 -0.048627 0"
       rpy="0 0 0" />
     <parent
-      link="body" />
+      link="Body" />
     <child
-      link="servo1r" />
+      link="Servo1_Left" />
     <axis
-      xyz="0 0 -1" />
+      xyz="0 0 1" />
     <limit
       lower="-1.5708"
       upper="1.5708"
-      effort="0.22"
-      velocity="38" />
+      effort="0.52"
+      velocity="10.89" />
   </joint>
   <link
-    name="servo2r">
+    name="Servo2_Left">
     <inertial>
       <origin
-        xyz="0.000308287765976077 -0.0349560457002559 -0.000227414690784307"
+        xyz="0.000235907986100528 -0.0319962115408566 9.42397503334013E-06"
         rpy="0 0 0" />
       <mass
-        value="0.0209718184775165" />
+        value="0.022604308352287" />
       <inertia
-        ixx="3.14944361251738E-06"
-        ixy="-2.66636529654835E-09"
-        ixz="-8.28909281611623E-11"
-        iyy="1.08188083399424E-06"
-        iyz="1.37857959164006E-09"
-        izz="2.6855511067329E-06" />
+        ixx="3.27436167088692E-06"
+        ixy="2.66811008456606E-09"
+        ixz="-8.29162619229438E-11"
+        iyy="1.11333471633781E-06"
+        iyz="-1.37858113387006E-09"
+        izz="2.83878279589868E-06" />
     </inertial>
     <visual>
       <origin
@@ -124,7 +124,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/servo2r.STL" />
+          filename="../meshes/Servo2_Left.STL" />
       </geometry>
       <material
         name="">
@@ -138,47 +138,101 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/servo2r.STL" />
+          filename="../meshes/Servo2_Left.STL" />
       </geometry>
     </collision>
   </link>
   <joint
-    name="kneer"
+    name="knee_L"
     type="revolute">
     <origin
-      xyz="-0.0002445 -0.047416 -0.0005"
+      xyz="0 -0.047416 0"
       rpy="0 0 0" />
     <parent
-      link="servo1r" />
+      link="Servo1_Left" />
     <child
-      link="servo2r" />
+      link="Servo2_Left" />
+    <axis
+      xyz="-1 0 0" />
+    <limit
+      lower="-1.5708"
+      upper="1.5708"
+      effort="0.52"
+      velocity="10.89" />
+  </joint>
+  <link
+    name="Servo3_Left">
+    <inertial>
+      <origin
+        xyz="8.14892709387893E-05 -0.0246574562466224 2.80851152929188E-09"
+        rpy="0 0 0" />
+      <mass
+        value="0.0161002375604621" />
+      <inertia
+        ixx="1.7994604546192E-06"
+        ixy="1.24376478044773E-12"
+        ixz="6.80558848949548E-14"
+        iyy="1.23532312259261E-06"
+        iyz="-1.4179313122931E-13"
+        izz="1.4738916006442E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/Servo3_Left.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/Servo3_Left.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="ankle_L"
+    type="revolute">
+    <origin
+      xyz="0 -0.047416 0"
+      rpy="0 0 0" />
+    <parent
+      link="Servo2_Left" />
+    <child
+      link="Servo3_Left" />
     <axis
       xyz="1 0 0" />
     <limit
       lower="-1.5708"
       upper="1.5708"
-      effort="0.22"
-      velocity="38" />
-    <mimic
-      joint="hipr"
-      multiplier="1"
-      offset="0" />
+      effort="0.52"
+      velocity="10.89" />
   </joint>
   <link
-    name="servo3r">
+    name="Servo1_Right">
     <inertial>
       <origin
-        xyz="0.000499999999999961 -0.0320629887870761 -0.000283443855796324"
+        xyz="0 0 0"
         rpy="0 0 0" />
       <mass
-        value="0.0309227624152866" />
+        value="0" />
       <inertia
-        ixx="3.11278543548184E-06"
-        ixy="2.09773003343448E-21"
-        ixz="4.95387982517753E-14"
-        iyy="5.79440254144382E-06"
-        iyz="-8.83367243149169E-22"
-        izz="5.81487246004715E-06" />
+        ixx="0"
+        ixy="0"
+        ixz="0"
+        iyy="0"
+        iyz="0"
+        izz="0" />
     </inertial>
     <visual>
       <origin
@@ -186,7 +240,65 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/servo3r.STL" />
+          filename="../meshes/Servo1_Right.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/Servo1_Right.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="hip_R"
+    type="revolute">
+    <origin
+      xyz="-0.05 -0.0486271117592205 0"
+      rpy="0 0 0" />
+    <parent
+      link="Body" />
+    <child
+      link="Servo1_Right" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-1.5708"
+      upper="1.5708"
+      effort="0.52"
+      velocity="10.89" />
+  </joint>
+  <link
+    name="Servo2_Right">
+    <inertial>
+      <origin
+        xyz="0.000235907986100514 -0.0319962115408566 9.42397503333711E-06"
+        rpy="0 0 0" />
+      <mass
+        value="0.0226043083522871" />
+      <inertia
+        ixx="3.27436167088692E-06"
+        ixy="2.6681100845662E-09"
+        ixz="-8.29162619230905E-11"
+        iyy="1.11333471633782E-06"
+        iyz="-1.37858113386937E-09"
+        izz="2.83878279589868E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/Servo2_Right.STL" />
       </geometry>
       <material
         name="">
@@ -200,216 +312,84 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="../meshes/servo3r.STL" />
+          filename="../meshes/Servo2_Right.STL" />
       </geometry>
     </collision>
   </link>
   <joint
-    name="ankler"
+    name="knee_R"
     type="revolute">
     <origin
-      xyz="0 -0.047416 -0.0002555"
+      xyz="0 -0.0474161341528266 0"
       rpy="0 0 0" />
     <parent
-      link="servo2r" />
+      link="Servo1_Right" />
     <child
-      link="servo3r" />
+      link="Servo2_Right" />
+    <axis
+      xyz="-1 0 0" />
+    <limit
+      lower="-1.5708"
+      upper="1.5708"
+      effort="0.52"
+      velocity="10.89" />
+  </joint>
+  <link
+    name="Servo3_Right">
+    <inertial>
+      <origin
+        xyz="8.14892709387616E-05 -0.0246574562466224 2.80851153634826E-09"
+        rpy="0 0 0" />
+      <mass
+        value="0.0161002375604621" />
+      <inertia
+        ixx="1.7994604546192E-06"
+        ixy="1.24376478041913E-12"
+        ixz="6.80558851190484E-14"
+        iyy="1.23532312259261E-06"
+        iyz="-1.41793131368259E-13"
+        izz="1.4738916006442E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/Servo3_Right.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/Servo3_Right.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="ankle_R"
+    type="revolute">
+    <origin
+      xyz="0 -0.0474161341528267 0"
+      rpy="0 0 0" />
+    <parent
+      link="Servo2_Right" />
+    <child
+      link="Servo3_Right" />
     <axis
       xyz="1 0 0" />
     <limit
       lower="-1.5708"
       upper="1.5708"
-      effort="0.22"
-      velocity="38" />
-    <mimic
-      joint="hipr"
-      multiplier="1"
-      offset="0" />
-  </joint>
-  <link
-    name="servo1l">
-    <inertial>
-      <origin
-        xyz="2.9811117204584E-05 -0.0346910121894035 -0.000509969127238129"
-        rpy="0 0 0" />
-      <mass
-        value="0.0213682467147692" />
-      <inertia
-        ixx="3.25958248565221E-06"
-        ixy="-2.66636529654381E-09"
-        ixz="-8.41577076327869E-11"
-        iyy="1.04298724915849E-06"
-        iyz="1.37857959163981E-09"
-        izz="2.70162820946052E-06" />
-    </inertial>
-    <visual>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
-      <geometry>
-        <mesh
-          filename="../meshes/servo1l.STL" />
-      </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
-      </material>
-    </visual>
-    <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
-      <geometry>
-        <mesh
-          filename="../meshes/servo1l.STL" />
-      </geometry>
-    </collision>
-  </link>
-  <joint
-    name="hipl"
-    type="revolute">
-    <origin
-      xyz="-0.04 -0.048627 0.0007"
-      rpy="0 0 0" />
-    <parent
-      link="body" />
-    <child
-      link="servo1l" />
-    <axis
-      xyz="0 0 -1" />
-    <limit
-      lower="-1.5708"
-      upper="1.5708"
-      effort="0.22"
-      velocity="38" />
-    <mimic
-      joint="hipr"
-      multiplier="1"
-      offset="0" />
-  </joint>
-  <link
-    name="servo2l">
-    <inertial>
-      <origin
-        xyz="0.000308287765976162 -0.0349560457002559 -0.000227414690784307"
-        rpy="0 0 0" />
-      <mass
-        value="0.0209718184775166" />
-      <inertia
-        ixx="3.14944361251738E-06"
-        ixy="-2.66636529654412E-09"
-        ixz="-8.28909281612556E-11"
-        iyy="1.08188083399424E-06"
-        iyz="1.37857959163944E-09"
-        izz="2.6855511067329E-06" />
-    </inertial>
-    <visual>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
-      <geometry>
-        <mesh
-          filename="../meshes/servo2l.STL" />
-      </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
-      </material>
-    </visual>
-    <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
-      <geometry>
-        <mesh
-          filename="../meshes/servo2l.STL" />
-      </geometry>
-    </collision>
-  </link>
-  <joint
-    name="kneel"
-    type="revolute">
-    <origin
-      xyz="-0.0002445 -0.047416 -0.0005"
-      rpy="0 0 0" />
-    <parent
-      link="servo1l" />
-    <child
-      link="servo2l" />
-    <axis
-      xyz="1 0 0" />
-    <limit
-      lower="-1.5708"
-      upper="1.5708"
-      effort="0.22"
-      velocity="38" />
-    <mimic
-      joint="hipr"
-      multiplier="1"
-      offset="0" />
-  </joint>
-  <link
-    name="servo3l">
-    <inertial>
-      <origin
-        xyz="0.000500000000000056 -0.0320629887870761 -0.000283443855796359"
-        rpy="0 0 0" />
-      <mass
-        value="0.0309227624152866" />
-      <inertia
-        ixx="3.11278543548184E-06"
-        ixy="-9.99234179964057E-22"
-        ixz="4.95387955736643E-14"
-        iyy="5.79440254144383E-06"
-        iyz="-5.77069359544575E-23"
-        izz="5.81487246004715E-06" />
-    </inertial>
-    <visual>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
-      <geometry>
-        <mesh
-          filename="../meshes/servo3l.STL" />
-      </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
-      </material>
-    </visual>
-    <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
-      <geometry>
-        <mesh
-          filename="../meshes/servo3l.STL" />
-      </geometry>
-    </collision>
-  </link>
-  <joint
-    name="anklel"
-    type="revolute">
-    <origin
-      xyz="0 -0.047416 -0.0002555"
-      rpy="0 0 0" />
-    <parent
-      link="servo2l" />
-    <child
-      link="servo3l" />
-    <axis
-      xyz="1 0 0" />
-    <limit
-      lower="-1.5708"
-      upper="1.5708"
-      effort="0.22"
-      velocity="38" />
-    <mimic
-      joint="hipr"
-      multiplier="1"
-      offset="0" />
+      effort="0.52"
+      velocity="10.89" />
   </joint>
 </robot>

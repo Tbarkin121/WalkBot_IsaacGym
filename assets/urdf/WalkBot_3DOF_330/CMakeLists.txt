@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 
-project(Robot)
+project(WalkBot_3DOF)
 
 find_package(catkin REQUIRED)
 

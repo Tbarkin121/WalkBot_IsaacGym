@@ -1,1 +1,1 @@
-controller_joint_names: ['', 'hipr', 'kneer', 'ankler', 'hipl', 'kneel', 'anklel', ]
+controller_joint_names: ['', 'hip_L', 'knee_L', 'ankle_L', 'hip_R', 'knee_R', 'ankle_R', ]

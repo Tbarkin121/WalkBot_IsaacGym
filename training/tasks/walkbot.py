@@ -56,10 +56,12 @@ class WalkBot(VecTask):
         self.dof_vel = self.dof_state.view(self.num_envs, self.num_dof, 2)[..., 1]
 
         # get gym GPU rigid body state tensor 
+        root_handle = self.gym.get_actor_root_rigid_body_handle(self.envs[0], self.walkbot_handles[0])
+        print('ROOT_HANDLE : {}'.format(root_handle))
         rb_state_tensor = self.gym.acquire_rigid_body_state_tensor(self.sim)
         self.rb_state = gymtorch.wrap_tensor(rb_state_tensor)
         self.rb_pos = self.rb_state.view(self.num_envs, 7, 13)[..., 0:15, 0:3]  #(num_envs, num_rigid_bodies, 13)[pos,ori,Lin-vel,Ang-vel]
-        self.body_pos = self.rb_state.view(self.num_envs, 7, 13)[..., self.body_dict['body'], 0:3] #num_envs, num_rigid_bodies, 13 (pos,ori,Lvel,Avel)
+        self.body_pos = self.rb_state.view(self.num_envs, 7, 13)[..., self.body_dict['Body'], 0:3] #num_envs, num_rigid_bodies, 13 (pos,ori,Lvel,Avel)
 
         # set init state
         pos = self.cfg["env"]["baseInitState"]["pos"]
@@ -164,9 +166,9 @@ class WalkBot(VecTask):
             dof_props = self.gym.get_actor_dof_properties(env_ptr, walkbot_handle)
             dof_props['driveMode'][:] = gymapi.DOF_MODE_POS
             dof_props['stiffness'][:] = 100000.0
-            dof_props['damping'][:] = 10000.0
-            dof_props['velocity'][:] = 38.0
-            dof_props['effort'][:] = 0.22
+            dof_props['damping'][:] = 0.0
+            dof_props['velocity'][:] = 10.89
+            dof_props['effort'][:] = 0.58
             dof_props['friction'][:] = 0.0
 
             self.gym.set_actor_dof_properties(env_ptr, walkbot_handle, dof_props)
@@ -186,8 +188,19 @@ class WalkBot(VecTask):
         self.dof_limits_upper = to_torch(self.dof_limits_upper, device=self.device)
 
         self.body_dict = self.gym.get_actor_rigid_body_dict(env_ptr, walkbot_handle)
+        self.joint_dict = self.gym.get_actor_joint_dict(env_ptr, walkbot_handle)
+        self.dof_dict = self.gym.get_asset_dof_dict(walkbot_asset)
+        print('body_dict:')
+        print(self.body_dict)
         for b in self.body_dict:
                 print(b)
+        print('joint_dict:')
+        for j in self.joint_dict:
+            print(j)
+        print('dof_dict:')
+        for d in self.dof_dict:
+            print(d)
+        
                 
     def compute_reward(self):
         # box_pos = self.obs_buf[:, 0:3]
@@ -308,6 +321,13 @@ class WalkBot(VecTask):
         self.compute_observations()
         self.compute_reward()
 
+        # Look at the first actor
+        # camOffset = gymapi.Vec3(-0.5, -1, 0.5)
+        # camTarget = gymapi.Vec3(self.root_pos[0, 0],self.root_pos[0, 1],self.root_pos[0, 2])
+        # print(camOffset)
+        # print(camTarget)
+        # self.gym.viewer_camera_look_at(self.viewer, None, camOffset+camTarget, camTarget)
+
 #####################################################################
 ###=========================jit functions=========================###
 #####################################################################
@@ -369,6 +389,7 @@ def compute_walkbot_reward(
     # reset agents
     reset = torch.where(obs_buf[:, 0] < termination_height, torch.ones_like(reset_buf), reset_buf)
     reset = torch.where(progress_buf >= max_episode_length - 1, torch.ones_like(reset_buf), reset)
+    # reset = torch.where(progress_buf >= max_episode_length - 1, torch.ones_like(reset_buf), reset_buf)
 
     return total_reward, reset
 
