@@ -19,8 +19,7 @@ An example that demonstrates various DOF control methods:
 """
 
 import math
-from isaacgym import gymapi
-from isaacgym import gymutil
+from isaacgym import gymutil, gymtorch, gymapi
 import time
 
 # initialize gym
@@ -33,7 +32,7 @@ args = gymutil.parse_arguments(description="Joint control Methods Example")
 sim_params = gymapi.SimParams()
 sim_params.substeps = 2
 sim_params.dt = 1.0 / 60.0
-sim_params.gravity = gymapi.Vec3(0.0, 0.0, 0.0)
+
 
 sim_params.physx.solver_type = 1
 sim_params.physx.num_position_iterations = 4
@@ -46,20 +45,21 @@ sim_params.use_gpu_pipeline = False
 if args.use_gpu_pipeline:
     print("WARNING: Forcing CPU pipeline.")
 
+sim_params.up_axis = gymapi.UP_AXIS_Z
+sim_params.gravity = gymapi.Vec3(0.0, 0.0, 0.0)
 sim = gym.create_sim(args.compute_device_id, args.graphics_device_id, args.physics_engine, sim_params)
 
 if sim is None:
     print("*** Failed to create sim")
     quit()
 
-# create viewer using the default camera properties
-viewer = gym.create_viewer(sim, gymapi.CameraProperties())
-if viewer is None:
-    raise ValueError('*** Failed to create viewer')
+
 
 # add ground plane
 plane_params = gymapi.PlaneParams()
-gym.add_ground(sim, gymapi.PlaneParams())
+# set the normal force to be z dimension
+plane_params.normal = gymapi.Vec3(0.0, 0.0, 1.0)
+gym.add_ground(sim, plane_params)
 
 # set up the env grid
 num_envs = 4
@@ -83,7 +83,7 @@ cubebot_asset = gym.load_asset(sim, asset_root, asset_file, asset_options)
 
 # initial root pose for cartpole actors
 initial_pose = gymapi.Transform()
-initial_pose.p = gymapi.Vec3(0.0, 2.0, 0.0)
+initial_pose.p = gymapi.Vec3(0.0, 0.0, 1.0)
 initial_pose.r = gymapi.Quat(0, 0.0, 0.0, 1.0)
 
 # Create environment 0
@@ -94,8 +94,8 @@ cubebot0 = gym.create_actor(env0, cubebot_asset, initial_pose, 'CubeBot', 0, 1)
 # Configure DOF properties
 props = gym.get_actor_dof_properties(env0, cubebot0)
 props["driveMode"][:] = gymapi.DOF_MODE_POS
-props["stiffness"] = 100000
-props['damping'][:] = 0.0
+props["stiffness"] = 1000.0
+props['damping'][:] = 100.0
 props['velocity'][:] = 10.89
 props['effort'][:] = 0.52
 props['friction'][:] = 0.0
@@ -105,13 +105,20 @@ gym.set_actor_dof_properties(env0, cubebot0, props)
 dof_dict = gym.get_actor_dof_dict(env0, cubebot0)
 joint_dict = gym.get_actor_joint_dict(env0, cubebot0)
 dof_keys = list(dof_dict.keys())
+actor_root_state = gym.acquire_actor_root_state_tensor(sim)
+root_states = gymtorch.wrap_tensor(actor_root_state)
 
 # targets = torch.tensor([1000, 0, 0, 0, 0, 0])
 # gym.set_dof_velocity_target_tensor(env0, gymtorch.unwrap_tensor(targets))
 
+# create viewer using the default camera properties
+viewer = gym.create_viewer(sim, gymapi.CameraProperties())
+if viewer is None:
+    raise ValueError('*** Failed to create viewer')
+
 # Look at the first env
-cam_pos = gymapi.Vec3(8, 4, 1.5)
-cam_target = gymapi.Vec3(0, 2, 1.5)
+cam_pos = gymapi.Vec3(2, 1, 1)
+cam_target = initial_pose.p
 gym.viewer_camera_look_at(viewer, None, cam_pos, cam_target)
 
 # Simulate
@@ -119,7 +126,11 @@ joint_idx = 0
 control_idx = 0
 loop_counter = 1
 max_loops = 50
+
+
 while not gym.query_viewer_has_closed(viewer):
+    gym.refresh_actor_root_state_tensor(sim)
+    print(root_states)
 
     # step the physics
     gym.simulate(sim)
@@ -147,26 +158,6 @@ while not gym.query_viewer_has_closed(viewer):
     loop_counter += 1
     if(loop_counter > max_loops):
         loop_counter=0
-
-    # if(1):
-    #     if(math.sin(0.05*counter1) > 0):
-    #         gym.set_dof_target_position(env0, handle_list[2], 0.785398/4)
-    #         gym.set_dof_target_position(env0, handle_list[3], -0.785398/4)
-            
-    #         for h in handle_list[0:2]:
-    #             gym.set_dof_target_position(env0, h, 2*0.785398)
-    #         for h in handle_list[4:6]:
-    #             gym.set_dof_target_position(env0, h, -0.785398)
-
-    #         # gym.set_dof_target_position(env0, IW1_handle0, 90.0)
-    #         # gym.set_dof_target_position(env0, IW2_handle0, 90.0)
-    #     else:
-    #         for h in handle_list:
-    #             gym.set_dof_target_position(env0, h, 0.0)
-
-    #         # gym.set_dof_target_position(env0, IW1_handle0, -90.0)
-    #         # gym.set_dof_target_position(env0, IW2_handle0, -90.0)
-    #     counter1 += 1
 
  
     # Wait for dt to elapse in real time.

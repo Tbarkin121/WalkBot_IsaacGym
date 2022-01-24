@@ -5,12 +5,15 @@ physics_engine: ${..physics_engine}
 
 # if given, will override the device setting in gym. 
 env:
-  numEnvs: ${resolve_default:512,${...num_envs}}
+  numEnvs: ${resolve_default:4096,${...num_envs}}
   envSpacing: 1.0
   maxEpisodeLength: 500
 
   clipObservations: 5.0
   clipActions: 1.0
+
+  goalDist: 4.0
+  goalThreshold: 0.2
 
   asset:
     assetRoot: "../../assets"
@@ -21,13 +24,27 @@ env:
 
   baseInitState:
     pos: [0.0, 0.0, .25] # x,y,z [m]
-    rot: [0.7071, 0.0, 0.0, 0.7071] # x,y,z,w [quat]
+    rot: [0.0, 0.0, 0.0, 1.0] # x,y,z,w [quat]
     vLinear: [0.0, 0.0, 0.0]  # x,y,z [m/s]
     vAngular: [0.0, 0.0, 0.0]  # x,y,z [rad/s]
 
+  actuatorParams:
+    driveMode: 1          #0 for Torque Control, 1 for Pos Control. This multiplies to stiffness and damping (Both should be 0 for torque control)
+    stiffness: 1000.0     #Controller looks like torque=posError*stiffness + velError*damping
+    damping: 10.0
+    maxPosition: 1.5708   # +/- 90 deg (this value is set in radians)
+    maxSpeed: 38          #M228 = 10.89, M077=38
+    maxTorque: 0.22       #M228 = 0.52, M077=0.22
+    friction: 0.0
+    torqueDecay: 4   #This controls how the avaliable torque falls off as a DOF_Vel approachs maxSpeed
+  
+  assetParams:
+    angularDamping: 0.0
+    angularVelocity: 10000.0
+
   plane:
-    staticFriction: 1.0
-    dynamicFriction: 1.0
+    staticFriction: 0.6
+    dynamicFriction: 0.5
     restitution: 0.0
   
   # reward parameters
@@ -37,7 +54,7 @@ env:
   # cost parameters
   dofVelocityScale: 0.2
   deathCost: -2.0
-  terminationHeight: 0.10
+  terminationHeight: 0.13
 
 sim:
   dt: 0.0166 # 1/60 s
@@ -50,7 +67,7 @@ sim:
     solver_type: ${....solver_type}
     use_gpu: ${contains:"cuda",${....sim_device}} # set to False to run on CPU
     num_position_iterations: 4
-    num_velocity_iterations: 0
+    num_velocity_iterations: 1
     contact_offset: 0.02
     rest_offset: 0.001
     bounce_threshold_velocity: 0.2
