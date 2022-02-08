@@ -16,8 +16,9 @@ class WalkBot(VecTask):
     def __init__(self, cfg, sim_device, graphics_device_id, headless):
         self.cfg = cfg
         self.dt = self.cfg["sim"]["dt"]
+        self.dt_mod = self.cfg["sim"]["dt_mod"]
 
-        self.max_episode_length = self.cfg["env"]["maxEpisodeLength"]
+        self.max_episode_length = self.cfg["env"]["maxEpisodeLength"]*self.dt_mod
         # self.randomization_params = self.cfg["task"]["randomization_params"]
         # self.randomize = self.cfg["task"]["randomize"]
         self.dof_vel_scale = self.cfg["env"]["dofVelocityScale"]
@@ -116,7 +117,7 @@ class WalkBot(VecTask):
         self.basis_vec1 = self.up_vec.clone()
         
         self.frame_count = 0
-        self.plot_buffer = []
+        # self.plot_buffer = []
 
     def create_sim(self):
         # set the up axis to be z-up given that assets are y-up by default
@@ -177,7 +178,7 @@ class WalkBot(VecTask):
             env_ptr = self.gym.create_env(
                 self.sim, lower, upper, num_per_row
             )
-            walkbot_handle = self.gym.create_actor(env_ptr, walkbot_asset, pose, "walkbot", i, 1, 0)
+            walkbot_handle = self.gym.create_actor(env_ptr, walkbot_asset, pose, "walkbot", i, 0, 0)
             rand_color = torch.rand((3), device=self.device)
             for j in range(self.num_bodies):
                 # self.gym.set_rigid_body_color(
@@ -267,6 +268,7 @@ class WalkBot(VecTask):
             self.death_cost,
             self.max_episode_length,
             self.goal_threshold)
+        self.rew_buf = self.rew_buf/self.dt_mod
         
     def compute_observations(self, env_ids=None):
         if env_ids is None:
@@ -338,17 +340,21 @@ class WalkBot(VecTask):
         # plt.show()
         # if(self.plot_buffer):
         #     plot_data = np.array(self.plot_buffer)
-        #     print(plot_data.shape)
-        #     plt.plot(plot_data[:,0,0] + plot_data[:,1,0] + plot_data[:,2,0], label="Total Reward")
-        #     plt.plot(plot_data[:,0,0], label="Progress Reward")
-        #     plt.plot(plot_data[:,1,0], label="Height Reward")
-        #     plt.plot(plot_data[:,2,0], label="Heading Reward")
+        #     # ax = plt.axes(projection='3d')
+        #     # r = 50
+        #     # ax.plot3D(plot_data[0:r,0],plot_data[0:r,1],plot_data[0:r,2])
+        #     # ax.scatter3D(plot_data[0:r,0],plot_data[0:r,1],plot_data[0:r,2])
+        #     # print(plot_data)
+        #     # plt.plot(plot_data[:,0,0] + plot_data[:,1,0] + plot_data[:,2,0], label="Total Reward")
+        #     plt.plot(plot_data[:,0], label="Servo 1")
+        #     plt.plot(plot_data[:,1], label="Servo 2")
+        #     plt.plot(plot_data[:,2], label="Servo 3")
         #     plt.ylabel('Reward')
         #     plt.xlabel('Steps')
         #     plt.grid()
         #     plt.legend(loc="lower right")
         #     plt.xlim([0, 500])
-        #     plt.ylim([-0.1, 2.1])
+        #     plt.ylim([-2.1, 2.1])
         #     plt.show()
         #     self.plot_buffer = []
 
@@ -368,7 +374,7 @@ class WalkBot(VecTask):
                                               gymtorch.unwrap_tensor(env_ids_int32+1), len(env_ids_int32))
 
         # self.gym.refresh_actor_root_state_tensor(self.sim)
-        to_target = self.goal_pos[env_ids] - self.walkbot_pos[env_ids]
+        to_target = self.goal_pos[env_ids, :] - self.walkbot_pos[env_ids, :]
         to_target[:, 2] = 0.0
         self.prev_potentials[env_ids] = -torch.norm(to_target, p=2, dim=-1) / self.dt
         self.potentials[env_ids] = self.prev_potentials[env_ids].clone()
@@ -432,17 +438,18 @@ class WalkBot(VecTask):
         self.compute_reward()
 
         # Look at the first actor
-        env_idx = 3
-        camOffset = gymapi.Vec3(0, -1.5, 0.25)
+        env_idx = 1
+        camOffset = gymapi.Vec3(0, -0.5, 0.25)
         camTarget = gymapi.Vec3(self.walkbot_pos[env_idx, 0],self.walkbot_pos[env_idx, 1],self.walkbot_pos[env_idx, 2])
-        camEnvOffset = gymapi.Vec3(1, 1, 0)
+        camEnvOffset = gymapi.Vec3(1, 0, 0)
         # print(camOffset)
         # print(camTarget)
-        self.gym.viewer_camera_look_at(self.viewer, None, camOffset+camTarget+camEnvOffset, camTarget+camEnvOffset)
+        # self.gym.viewer_camera_look_at(self.viewer, None, camOffset+camTarget+camEnvOffset, camTarget+camEnvOffset)
         # time.sleep(0.1)   
         self.debug_printout()
 
     def debug_printout(self):
+        pass
         # print('DEBUG PRINTOUTS')
         # body_height = self.obs_buf[:,2]
         # up_projection = self.obs_buf[:,29]
@@ -454,19 +461,19 @@ class WalkBot(VecTask):
         # # reward for duration of staying alive
         # progress_reward = self.potentials - self.prev_potentials
         # total_reward = progress_reward + up_reward + heading_reward]
-        xtream_rewards = torch.abs(self.rew_buf) > 5
+        # xtream_rewards = torch.abs(self.rew_buf) > 5
         # print('ProgressReward[3] : {} = {} - {}'.format(progress_reward[3], self.potentials[3], self.prev_potentials[3]))
         # print('EnvReset[3], GoalReset[3] : {}, {}'.format(self.reset_buf[3], self.goal_reset[3]))
         # print('Bot Pos, Goal Pos = {}, {}'.format(self.walkbot_pos[3,:], self.goal_pos[3,:]))
-        if(torch.any(xtream_rewards)):
-            print('XTREAM REWARD DETECTED')
-            xtream_idx = xtream_rewards.nonzero().cpu().detach().numpy()
-            print("xtream index = {}".format(xtream_idx))
-            print(self.rew_buf[xtream_idx])
-            print('Progress Reward : {} = {} - {}'.format(progress_reward[xtream_idx], self.potentials[xtream_idx], self.prev_potentials[xtream_idx]))
-            print('EnvReset, GoalReset : {},{}'.format(self.reset_buf[xtream_idx], self.goal_reset[xtream_idx]))
-            time.sleep(10)
-            print()
+        # if(torch.any(xtream_rewards)):
+        #     print('XTREAM REWARD DETECTED')
+        #     xtream_idx = xtream_rewards.nonzero().cpu().detach().numpy()
+        #     print("xtream index = {}".format(xtream_idx))
+        #     print(self.rew_buf[xtream_idx])
+        #     print('Progress Reward : {} = {} - {}'.format(progress_reward[xtream_idx], self.potentials[xtream_idx], self.prev_potentials[xtream_idx]))
+        #     print('EnvReset, GoalReset : {},{}'.format(self.reset_buf[xtream_idx], self.goal_reset[xtream_idx]))
+        #     time.sleep(10)
+        #     print()
         # print('{:.2f} = {:.2f} + {:.2f} + {:.2f}'.format(total_reward[0], heading_reward[0], up_reward[0], progress_reward[0]))
 
         # print(' self.reset_buf')
@@ -477,9 +484,9 @@ class WalkBot(VecTask):
             #     time.sleep(1)
         # tmp_height_reward = self.obs_buf[:,0]
         # tmp_heading_reward = self.rew_buf - tmp_progress_reward
-        # self.plot_buffer.append((tmp_progress_reward.cpu().detach().numpy(),
-        #                         tmp_height_reward.cpu().detach().numpy(),
-        #                         tmp_heading_reward.cpu().detach().numpy()))
+
+        # plot_tmp = self.dof_pos.cpu().detach().numpy()
+        # self.plot_buffer.append([plot_tmp[0,0], plot_tmp[0,1], plot_tmp[0,2]])
         
 
 #####################################################################
@@ -539,8 +546,8 @@ def compute_walkbot_reward(
     alive_reward = torch.ones_like(potentials) * 0.5
     progress_reward = potentials - prev_potentials
 
-    foot_diff_penelty = torch.abs(left_foot_pos-right_foot_pos)/10
-    
+    foot_diff_penelty = torch.abs(left_foot_pos-right_foot_pos)/5
+
     total_reward = progress_reward + up_reward + heading_reward - foot_diff_penelty
     # total_reward = progress_reward + obs_buf[:,0]*4 + heading_reward
     # total_reward = progress_reward + heading_reward

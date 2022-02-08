@@ -1,5 +1,5 @@
 # used to create the object
-name: WalkBot
+name: WalkBot_IKRL
 
 physics_engine: ${..physics_engine}
 
@@ -8,35 +8,42 @@ env:
   numEnvs: ${resolve_default:4096,${...num_envs}}
   envSpacing: 1.0
   maxEpisodeLength: 500
+  debug_mode: False
+  # cost parameters
+  actionsCost: 0.05
+  energyCost: 0.2
+  jointsAtLimitCost: 0.25
 
   clipObservations: 5.0
   clipActions: 1.0
 
-  goalDist: 4.0
-  goalThreshold: 0.2
+  goalDist: 0.08
+  goalOffset: [0.0, 0.05, 0.35]
+  goalThreshold: 0.05
+  goalRange: 0.32
 
   asset:
     assetRoot: "../../assets"
-    assetFileName: "urdf/WalkBot/urdf/WalkBot.urdf"
+    assetFileName: "urdf/WalkBot_IKRL/urdf/WalkBot.urdf"
 
   # set to True if you use camera sensors in the environment
   enableCameraSensors: False
 
   baseInitState:
     pos: [0.0, 0.0, .25] # x,y,z [m]
-    rot: [0.0, 0.0, 0.0, 1.0] # x,y,z,w [quat]
+    rot: [1.0, 0.0, 0, 0.0] # x,y,z,w [quat]
     vLinear: [0.0, 0.0, 0.0]  # x,y,z [m/s]
     vAngular: [0.0, 0.0, 0.0]  # x,y,z [rad/s]
 
   actuatorParams:
     driveMode: 1          #0 for Torque Control, 1 for Pos Control. This multiplies to stiffness and damping (Both should be 0 for torque control)
-    stiffness: 1000.0     #Controller looks like torque=posError*stiffness + velError*damping
+    stiffness: 100.0     #Controller looks like torque=posError*stiffness + velError*damping
     damping: 10.0
-    maxPosition: 1.5708   # +/- 90 deg (this value is set in radians)
+    maxPosition: 2.09   # +/- 90 deg (this value is set in radians)
     maxSpeed: 38          #M228 = 10.89, M077=38
     maxTorque: 0.22       #M228 = 0.52, M077=0.22
     friction: 0.0
-    torqueDecay: 4   #This controls how the avaliable torque falls off as a DOF_Vel approachs maxSpeed
+    torqueDecay: 2   #This controls how the avaliable torque falls off as a DOF_Vel approachs maxSpeed
   
   assetParams:
     angularDamping: 0.0
@@ -57,9 +64,8 @@ env:
   terminationHeight: 0.13 #0.13
 
 sim:
-  # dt: 0.0166 # 1/60 s
-  dt: 0.002083 # 1/480
-  dt_mod: 8 # For changing the dt to 1/480 s. Scales rewards and episode length
+  dt: 0.0166 # 1/60 s
+  dt_mod: 1 # For changing the dt to 1/480 s. Scales rewards and episode length
   substeps: 2
   up_axis: "z"
   use_gpu_pipeline: ${eq:${...pipeline},"gpu"}

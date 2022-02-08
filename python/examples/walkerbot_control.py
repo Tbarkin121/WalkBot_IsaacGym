@@ -31,12 +31,12 @@ args = gymutil.parse_arguments(description="Joint control Methods Example")
 # create a simulator
 sim_params = gymapi.SimParams()
 sim_params.substeps = 2
-sim_params.dt = 1.0 / 60.0
+sim_params.dt = 1.0 / 100.0
 
 
 sim_params.physx.solver_type = 1
-sim_params.physx.num_position_iterations = 4
-sim_params.physx.num_velocity_iterations = 1
+sim_params.physx.num_position_iterations = 8
+sim_params.physx.num_velocity_iterations = 2
 
 sim_params.physx.num_threads = args.num_threads
 sim_params.physx.use_gpu = args.use_gpu
@@ -90,7 +90,7 @@ initial_pose.r = gymapi.Quat(0, 0.0, 0.0, 1.0)
 # Cart held steady using position target mode.
 # Pole held at a 45 degree angle using position target mode.
 env0 = gym.create_env(sim, env_lower, env_upper, 2)
-cubebot0 = gym.create_actor(env0, cubebot_asset, initial_pose, 'CubeBot', 0, 1)
+cubebot0 = gym.create_actor(env0, cubebot_asset, initial_pose, 'CubeBot', 0, 0)
 # Configure DOF properties
 props = gym.get_actor_dof_properties(env0, cubebot0)
 props["driveMode"][:] = gymapi.DOF_MODE_POS
@@ -143,9 +143,9 @@ while not gym.query_viewer_has_closed(viewer):
     if(loop_counter == 0):
         print('control idx = {}. handle_list[{}] = {}'.format(control_idx, joint_idx, joint_idx))
         if(control_idx == 0):
-            gym.set_dof_target_position(env0, joint_idx, 1.5707)
+            gym.set_dof_target_position(env0, joint_idx, 2.09)
         elif(control_idx == 1):
-            gym.set_dof_target_position(env0, joint_idx, -1.5707)
+            gym.set_dof_target_position(env0, joint_idx, -2.09)
         else:
             gym.set_dof_target_position(env0, joint_idx, 0)
         control_idx += 1

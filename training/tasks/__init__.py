@@ -28,10 +28,13 @@
 
 
 from tasks.walkbot import WalkBot
+from tasks.walkbot_ikrl import WalkBot_IKRL
 from tasks.walkbot_4dof import WalkBot_4DOF
-
+from tasks.walkbot_hard import WalkBot_Hard
 # Mappings from strings to environments
 isaacgym_task_map = {
     "WalkBot": WalkBot,
+    "WalkBot_IKRL": WalkBot_IKRL,
     "WalkBot_4DOF": WalkBot_4DOF,
+    "WalkBot_Hard": WalkBot_Hard,
 }
