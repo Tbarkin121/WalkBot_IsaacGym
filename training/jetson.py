@@ -29,7 +29,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import isaacgym
+# import isaacgym
 
 import os
 import hydra
@@ -41,7 +41,8 @@ from utils.reformat import omegaconf_to_dict, print_dict
 from utils.jetson_utils import JETSONEnv, JetsonAlgoObserver, get_jeston_env_creator
 from utils.utils import set_np_formatting, set_seed
 
-from rl_games.common import env_configurations, vecenv
+from rl_games.common import env_configurations
+from rl_games.common import vecenv_mod
 from rl_games.torch_runner import Runner
 
 import yaml
@@ -86,7 +87,7 @@ def launch_jet_hydra(cfg: DictConfig):
     )
 
     # # register the rl-games adapter to use inside the runner
-    vecenv.register('JETSON',
+    vecenv_mod.register('JETSON',
                     lambda config_name, num_actors, **kwargs: JETSONEnv(config_name, num_actors, **kwargs))
     env_configurations.register('jetson', {
         'vecenv_type': 'JETSON',
