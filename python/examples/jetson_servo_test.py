@@ -21,7 +21,9 @@ ADDR_TORQUE_ENABLE          = 64
 ADDR_GOAL_POSITION          = 116
 LEN_GOAL_POSITION           = 4         # Data Byte Length
 ADDR_PRESENT_POSITION       = 132
+ADDR_PRESENT_VELOCITY       = 128
 LEN_PRESENT_POSITION        = 4         # Data Byte Length
+LEN_PRESENT_VELOCITY        = 4         # Data Byte Length
 DXL_MINIMUM_POSITION_VALUE  = 0         # Refer to the Minimum Position Limit of product eManual
 DXL_MAXIMUM_POSITION_VALUE  = 4095      # Refer to the Maximum Position Limit of product eManual
 BAUDRATE                    = 115200
@@ -32,6 +34,9 @@ PROTOCOL_VERSION            = 2.0
 
 # Make sure that each DYNAMIXEL ID should have unique ID.
 DXL_IDS = [10, 20, 30, 40, 50, 60]
+# DXL_IDS = [30,60]
+DXL_LIMIT_LIST = [0,1,2,3,4,5]
+# DXL_LIMIT_LIST = [2, 5]
 
 # Use the actual port assigned to the U2D2.
 # ex) Windows: "COM*", Linux: "/dev/ttyUSB*", Mac: "/dev/tty.usbserial-*"
@@ -44,11 +49,11 @@ DXL_MOVING_STATUS_THRESHOLD = 20                # Dynamixel moving status thresh
 index = 0
 # Goal position
 dxl_goal_position = np.array([[1800, 2200],
-                              [1000, 3000],
-                              [1000, 3000],
+                              [1023, 3073],
+                              [1023, 3073],
                               [1800, 2200],
-                              [1000, 3000],
-                              [1000, 3000]])
+                              [1023, 3073],
+                              [1023, 3073]])
 
 # Initialize PortHandler instance
 # Set the port path
@@ -64,8 +69,7 @@ packetHandler = PacketHandler(PROTOCOL_VERSION)
 groupSyncWrite = GroupSyncWrite(portHandler, packetHandler, ADDR_GOAL_POSITION, LEN_GOAL_POSITION)
 
 # Initialize GroupSyncRead instace for Present Position
-groupSyncRead = GroupSyncRead(portHandler, packetHandler, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
-
+groupSyncRead = GroupSyncRead(portHandler, packetHandler, ADDR_PRESENT_VELOCITY, LEN_PRESENT_VELOCITY+LEN_PRESENT_POSITION)
 # Open port
 if portHandler.openPort():
     print("Succeeded to open the port")
@@ -114,22 +118,32 @@ while 1:
         dxl_comm_result = groupSyncRead.txRxPacket()
         if dxl_comm_result != COMM_SUCCESS:
             print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
-
-        for dxl_id, idx in zip(DXL_IDS, range(len(DXL_IDS))):
-            goal_position = lerp(dxl_goal_position[idx, 0], dxl_goal_position[idx, 1], i /steps)   
+        pos_list = []
+        vel_list = []
+        for dxl_id, idx in zip(DXL_IDS, DXL_LIMIT_LIST):
+            goal_position = lerp(dxl_goal_position[idx, index%2], dxl_goal_position[idx, (index+1)%2], i /steps)   
             # print(goal_position)
             # Allocate goal position value into byte array
             param_goal_position = [DXL_LOBYTE(DXL_LOWORD(goal_position)), DXL_HIBYTE(DXL_LOWORD(goal_position)), DXL_LOBYTE(DXL_HIWORD(goal_position)), DXL_HIBYTE(DXL_HIWORD(goal_position))]
 
             # Check if groupsyncread data of Dynamixel#1 is available
-            dxl_getdata_result = groupSyncRead.isAvailable(dxl_id, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
-            if dxl_getdata_result != True:
-                print("[ID:%03d] groupSyncRead getdata failed" % dxl_id)
-                quit()
+            # dxl_getdata_result_pos = groupSyncRead.isAvailable(dxl_id, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
+            # dxl_getdata_result_vel = groupSyncRead.isAvailable(dxl_id, ADDR_PRESENT_VELOCITY, LEN_PRESENT_VELOCITY)
+            
+            # if (dxl_getdata_result_pos != True or dxl_getdata_result_vel != True):
+            #     print("[ID:%03d] groupSyncRead getdata failed" % dxl_id)
+            #     quit()
+
             #Get Present Position
             dxl_present_position = groupSyncRead.getData(dxl_id, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
-            print("[ID:%03d] GoalPos:%03d  PresPos:%03d" % (dxl_id, goal_position, dxl_present_position))
-
+            pos_list.append(dxl_present_position)
+            dxl_present_velocity = groupSyncRead.getData(dxl_id, ADDR_PRESENT_VELOCITY, LEN_PRESENT_VELOCITY)
+            if(len(bin(dxl_present_velocity))>16):
+                dxl_present_velocity -= 2**32
+            dxl_present_velocity *= 0.229 #Converts it to rev/min
+            vel_list.append(dxl_present_velocity)
+            # print("[ID:%03d] PresPos:%03d  PresVel:%03d" % (dxl_id, dxl_present_position, dxl_present_velocity))
+            
             # Add Dynamixel#1 goal position value to the Syncwrite parameter storage
             dxl_addparam_result = groupSyncWrite.addParam(dxl_id, param_goal_position)
             if dxl_addparam_result != True:
@@ -140,46 +154,12 @@ while 1:
         dxl_comm_result = groupSyncWrite.txPacket()
         if dxl_comm_result != COMM_SUCCESS:
             print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
-
-        # Clear syncwrite parameter storage
-        groupSyncWrite.clearParam()
     
-    #Move Backward
-    for i in range(steps):
-        #Sync Read Present Position
-        dxl_comm_result = groupSyncRead.txRxPacket()
-        if dxl_comm_result != COMM_SUCCESS:
-            print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
-
-
-        for dxl_id, idx in zip(DXL_IDS, range(len(DXL_IDS))):
-            goal_position = lerp(dxl_goal_position[idx, 1], dxl_goal_position[idx, 0], i /steps)   
-            # print(goal_position)
-            # Allocate goal position value into byte array
-            param_goal_position = [DXL_LOBYTE(DXL_LOWORD(goal_position)), DXL_HIBYTE(DXL_LOWORD(goal_position)), DXL_LOBYTE(DXL_HIWORD(goal_position)), DXL_HIBYTE(DXL_HIWORD(goal_position))]
-
-            # Check if groupsyncread data of Dynamixel#1 is available
-            dxl_getdata_result = groupSyncRead.isAvailable(dxl_id, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
-            if dxl_getdata_result != True:
-                print("[ID:%03d] groupSyncRead getdata failed" % dxl_id)
-                quit()
-            #Get Present Position
-            dxl_present_position = groupSyncRead.getData(dxl_id, ADDR_PRESENT_POSITION, LEN_PRESENT_POSITION)
-            print("[ID:%03d] GoalPos:%03d  PresPos:%03d" % (dxl_id,goal_position, dxl_present_position))
-
-            # Add Dynamixel#1 goal position value to the Syncwrite parameter storage
-            dxl_addparam_result = groupSyncWrite.addParam(dxl_id, param_goal_position)
-            if dxl_addparam_result != True:
-                print("[ID:%03d] groupSyncWrite addparam failed" % DXL1_ID)
-                quit()
-
-        # Syncwrite goal position
-        dxl_comm_result = groupSyncWrite.txPacket()
-        if dxl_comm_result != COMM_SUCCESS:
-            print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
-
         # Clear syncwrite parameter storage
         groupSyncWrite.clearParam()
+
+        print('Pos : {:.2f}, {:.2f}, {:.2f}'.format(pos_list[0],pos_list[1],pos_list[2]))
+        print('Vel : {:.2f}, {:.2f}, {:.2f}'.format(vel_list[0],vel_list[1],vel_list[2]))
     
 
     # Change goal position
@@ -198,8 +178,6 @@ for dxl_id in DXL_IDS:
         print("%s" % packetHandler.getTxRxResult(dxl_comm_result))
     elif dxl_error != 0:
         print("%s" % packetHandler.getRxPacketError(dxl_error))
-    else:
-        print("Dynamixel#%d has been successfully connected" % dxl_id)
 
 # Close port
 portHandler.closePort()

@@ -14,6 +14,8 @@ env:
 
   goalDist: 4.0
   goalThreshold: 0.2
+  goalOffset: [0.0, 0.05, 0.35]
+  goalRange: 0.32
 
   asset:
     assetRoot: "../../assets"
