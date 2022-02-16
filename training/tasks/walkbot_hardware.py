@@ -14,7 +14,8 @@ PROTOCOL_VERSION            = 2.0
 DEVICENAME                  = '/dev/ttyUSB0'
 TORQUE_ENABLE               = 1                 # Value for enabling the torque
 TORQUE_DISABLE              = 0                 # Value for disabling the torque
-DXL_IDS                     = [10,20,30]
+# DXL_IDS                     = [10,20,30]
+DXL_IDS                     = [40,50,60]
 
 SERVO_HOME_POSITION         = 2048 # In Encoder Tics
 SERVO_MAX_POSITION          = 1024 # In Encoder Tics

@@ -17,8 +17,10 @@ from tasks import walkbot_hardware
 class WalkBot_HIL(VecTask):
     def __init__(self, cfg, sim_device, graphics_device_id, headless):
         self.hardware = walkbot_hardware.WalkBot_Hard()
-        self.hardware.enable_torque()
-        # self.hardware.disable_torque()
+        # self.hardware.enable_torque()
+        self.hardware.disable_torque()
+
+
 
         self.cfg = cfg
         self.dt = self.cfg["sim"]["dt"]
@@ -119,6 +121,10 @@ class WalkBot_HIL(VecTask):
         self.prev_dof_scaled_velocity = torch.zeros((self.num_envs, 3), device=self.device)
         self.prev_scaled_goal_position = torch.zeros((self.num_envs, 3), device=self.device)
         self.prev_actions = torch.zeros((self.num_envs, 3), device=self.device)
+
+        self.gym.subscribe_viewer_keyboard_event(self.viewer, gymapi.KEY_E, "enable")
+        self.gym.subscribe_viewer_keyboard_event(self.viewer, gymapi.KEY_D, "disable")
+        self.gym.subscribe_viewer_keyboard_event(self.viewer, gymapi.KEY_I, "debug")
 
     def create_sim(self):
         # set the up axis to be z-up given that assets are y-up by default
@@ -230,8 +236,10 @@ class WalkBot_HIL(VecTask):
 
         # Modify ENV 0 to be controlled with hardware
         dof_props = self.gym.get_actor_dof_properties(self.envs[0], self.walkbot_handles[0])
+        dof_props['driveMode'][:] = gymapi.DOF_MODE_NONE
         dof_props['stiffness'][:] = 0.0
         dof_props['damping'][:] = 0.0
+        # dof_props['friction'][:] = 10000
         self.gym.set_actor_dof_properties(self.envs[0], walkbot_handle, dof_props)
 
 
@@ -419,6 +427,14 @@ class WalkBot_HIL(VecTask):
         #                                       gymtorch.unwrap_tensor(env_ids_int32+1), len(env_ids_int32))
 
     def pre_physics_step(self, actions):
+        for evt in self.gym.query_viewer_action_events(self.viewer):
+            if evt.action == "enable" and evt.value > 0:
+                self.hardware.enable_torque()
+            elif (evt.action == "disable") and evt.value > 0:
+                self.hardware.disable_torque()
+            elif (evt.action == "debug") and evt.value > 0:
+                self.debug_mode = not self.debug_mode
+
         self.find_foot_coordinates()
         # print('actions')
         # print(actions)
@@ -441,17 +457,10 @@ class WalkBot_HIL(VecTask):
 
         # Hardware will control ENV 0 
         state = torch.tensor(self.hardware.read_state(), device=self.device)
-        env_ids_hw = torch.zeros(self.num_envs, device=self.device, dtype=torch.long)
-        env_ids_hw[0] = 1
-        env_ids = env_ids_hw.nonzero(as_tuple=False).squeeze(-1)
-        print(env_ids)
-        # print('Resetting IDX! Env_IDs = {}'.format(env_ids))
+        env_ids = torch.tensor([0], device=self.device)
         env_ids_int32 = env_ids.to(dtype=torch.int32)*self.num_actors
-
         positions = torch.tensor([state[0,0],state[0,1],state[0,2]], device=self.device, dtype=torch.float)
         velocities = torch.tensor([state[1,0],state[1,1],state[1,2]], device=self.device, dtype=torch.float)
-        print(positions)
-        print(self.dof_pos[env_ids, :])
         self.dof_pos[env_ids, :] = positions[:] * self.maxPosition
         self.dof_vel[env_ids, :] = velocities[:] * self.maxSpeed
 
@@ -502,7 +511,7 @@ class WalkBot_HIL(VecTask):
         camEnvOffset = gymapi.Vec3(0, 0, 0)
         # print(camOffset)
         # print(camTarget)
-        self.gym.viewer_camera_look_at(self.viewer, None, camOffset+camTarget+camEnvOffset, camTarget+camEnvOffset)
+        # self.gym.viewer_camera_look_at(self.viewer, None, camOffset+camTarget+camEnvOffset, camTarget+camEnvOffset)
         # time.sleep(0.1)
         if(self.debug_mode):
             self.debug_printout()
@@ -510,11 +519,11 @@ class WalkBot_HIL(VecTask):
     def debug_printout(self):
         print('DEBUG PRINTOUTS')
         # print('target pos = {}'.format(self.actions*self.maxPosition))
-        # print(self.obs_buf[:,6:12])
+        print(self.obs_buf[0, : ])
         # print(self.rew_buf)
         # print(self.actions)
         # print(self.reward_comp[0,:])
-        print('goal pos : {}'.format(self.obs_buf[:, 6:9]))
+        # print('goal pos : {}'.format(self.obs_buf[:, 6:9]))
         # time.sleep(.1)
         # draw some lines
         self.gym.clear_lines(self.viewer)
