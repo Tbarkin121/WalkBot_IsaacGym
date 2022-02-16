@@ -26,7 +26,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from rl_games.common import env_configurations, vecenv
+# from rl_games.common import env_configurations, vecenv
+from rl_games.common import env_configurations, ivecenv
 from rl_games.common.algo_observer import AlgoObserver
 from rl_games.algos_torch import torch_ext
 import torch
@@ -142,7 +143,7 @@ class JetsonAlgoObserver(AlgoObserver):
             self.writer.add_scalar('scores/time', mean_scores, total_time)
 
 
-class JETSONEnv(vecenv.IVecEnv):
+class JETSONEnv(ivecenv.IVecEnv):
     def __init__(self, config_name, num_actors, **kwargs):
         self.env = env_configurations.configurations[config_name]['env_creator'](**kwargs)
 

@@ -32,6 +32,7 @@ class WalkBot_IKRL(VecTask):
         self.termination_height = self.cfg["env"]["terminationHeight"]
 
         self.debug_mode = self.cfg["env"]["debug_mode"]
+        self.her_mode = self.cfg["env"]["her_obs"]
         self.plane_static_friction = self.cfg["env"]["plane"]["staticFriction"]
         self.plane_dynamic_friction = self.cfg["env"]["plane"]["dynamicFriction"]
         self.plane_restitution = self.cfg["env"]["plane"]["restitution"]
@@ -58,7 +59,7 @@ class WalkBot_IKRL(VecTask):
         # DOF VEL (3)
         # Goal POS (3)
         # Actions (3)
-        self.cfg["env"]["numObservations"] = 15
+        self.cfg["env"]["numObservations"] = 12
         # Joint Targets (3) Either Torques or Positions, depends on drive mode 
         self.cfg["env"]["numActions"] = 3
 
@@ -254,7 +255,7 @@ class WalkBot_IKRL(VecTask):
         # distance_to_goal = torch.norm(to_target, dim=-1)
         # reward = -distance_to_goal*2
         # print('D2G, R = {}, {}'.format(distance_to_goal, reward))
-        
+
         self.rew_buf[:], self.reset_buf[:], self.goal_reset, self.reward_comp= compute_walkbot_reward(
             self.obs_buf,
             self.foot_pos,
@@ -267,7 +268,12 @@ class WalkBot_IKRL(VecTask):
             self.actions_cost_scale,
             self.energy_cost_scale,
             self.joints_at_limit_cost_scale)
-        self.rew_buf = self.rew_buf/self.dt_mod
+        # self.rew_buf = self.rew_buf/self.dt_mod
+        # to_target = self.foot_pos - self.goal_pos
+        # distance_to_goal = torch.norm(to_target, p=2, dim=-1)
+        # distance_reward = (1.0/(1.0+distance_to_goal**2))**2
+        # distance_reward = torch.where(distance_to_goal <= 0.02, distance_reward * 2, distance_reward )
+        # print(distance_to_goal)
 
     def compute_observations(self, env_ids=None):
         if env_ids is None:
@@ -284,10 +290,15 @@ class WalkBot_IKRL(VecTask):
         dof_scaled_velocity = torch.div(self.dof_vel, self.maxSpeed)
         scaled_goal_position = torch.div(self.goal_pos-goalOffset, self.goal_range)
         scaled_foot_position = torch.div(self.foot_pos-goalOffset, self.goal_range) #The coordinates of this should be identical to that of the scaled goal position
+        
+        # HER modification for half of the environments
+        if(self.her_mode):
+            tmp_incr = torch.unsqueeze(torch.range(0, self.num_envs-1, device=self.device), dim=-1).repeat(1,3)
+            scaled_goal_position = torch.where(tmp_incr < len(tmp_incr)/2 , scaled_goal_position, scaled_foot_position)        
+
         self.obs_buf = torch.cat((dof_scaled_position, 
                                   dof_scaled_velocity, 
                                   scaled_goal_position,
-                                  scaled_foot_position, 
                                   self.actions), dim=-1)
         # self.obs_buf = torch.cat((dof_scaled_position, 
         #                           dof_scaled_velocity, 
@@ -368,7 +379,7 @@ class WalkBot_IKRL(VecTask):
         dist_to_home = torch.unsqueeze(torch.norm(vec_to_home, dim=1), -1)
         dir_to_home = torch.div(vec_to_home, dist_to_home.repeat(1,3))
        
-        goal_vel_update = torch_rand_float(-0.1, 0.1, (len(env_ids), 3), device=self.device)
+        goal_vel_update = torch_rand_float(-0.05, 0.05, (len(env_ids), 3), device=self.device)
         # Give the goal a new random velocity 5% of the time
         goal_vel_update = torch.where(update_roll<0.05, goal_vel_update, self.goal_vel)
         # Prevent the goal from getting too far away
@@ -415,9 +426,12 @@ class WalkBot_IKRL(VecTask):
 
     def set_motor_positions(self, targets):
         target_pos = targets*self.maxPosition
+        # print(target_pos)
+        # target_pos = torch.ones_like(targets, device=self.device)*self.maxPosition
         self.gym.set_dof_position_target_tensor(self.sim, gymtorch.unwrap_tensor(target_pos))
     
     def set_motor_torques(self, targets):
+        # print('torques?')
         # target_torques = torch.zeros((self.num_envs, self.num_dof), device=self.device)
 
         target_torques = targets*self.maxTorque
@@ -459,8 +473,13 @@ class WalkBot_IKRL(VecTask):
 
     def debug_printout(self):
         print('DEBUG PRINTOUTS')
-        print(self.obs_buf[:,3:6])
-
+        # print('target pos = {}'.format(self.actions*self.maxPosition))
+        # print(self.obs_buf[:,6:12])
+        # print(self.rew_buf)
+        # print(self.actions)
+        # print(self.reward_comp[0,:])
+        print('goal pos : {}'.format(self.obs_buf[:, 6:9]))
+        # time.sleep(.1)
         # draw some lines
         self.gym.clear_lines(self.viewer)
         num_lines = 1
@@ -505,10 +524,12 @@ def compute_walkbot_reward(
     actions_cost_scale,
     energy_cost_scale,
     joints_at_limit_cost_scale):
-    # type: (Tensor, Tensor, Tensor, Tensor, Tensor, Tensor, float, float, float, float, float) -> Tuple[Tensor, Tensor, Tensor, list[Tensor]]
+    # type: (Tensor, Tensor, Tensor, Tensor, Tensor, Tensor, float, float, float, float, float) -> Tuple[Tensor, Tensor, Tensor, Tensor]
     
-    to_target = goal_pos - foot_pos
-    distance_to_goal = torch.norm(to_target, dim=-1)
+    to_target = foot_pos - goal_pos
+    distance_to_goal = torch.norm(to_target, p=2, dim=-1)
+    distance_reward = (1.0/(1.0+distance_to_goal**2))**2
+    distance_reward = torch.where(distance_to_goal <= 0.02, distance_reward * 2, distance_reward )
     reset = torch.where(progress_buf >= max_episode_length - 1, torch.ones_like(reset_buf), reset_buf)
     
     # norm_vel = torch.norm(dof_vel/max_dov_vel, dim=-1)
@@ -517,28 +538,28 @@ def compute_walkbot_reward(
     electricity_cost = torch.sum(torch.abs(actions * obs_buf[:, 3:6]), dim=-1)
     scaled_cost = joints_at_limit_cost_scale * (torch.abs(obs_buf[:, 0:3]) - 0.98) / 0.02
     dof_at_limit_cost = torch.sum((torch.abs(obs_buf[:, 0:3]) > 0.98) * scaled_cost, dim=-1)
-    
-
-    rewards = -distance_to_goal**2
-    rewards -= actions_cost_scale*actions_cost
-    # rewards = -actions_cost_scale*actions_cost
-    # rewards -= electricity_cost*energy_cost_scale
-    # rewards -= dof_at_limit_cost
-
-    # vel_penelty = torch.sum(torch.where(dof_vel > 20, 1, 0), dim=-1)*0.1
-    # reward -= vel_penelty
     near_goal_reward = torch.where(distance_to_goal < goal_threshold, 1, 0)
-    rewards += near_goal_reward
-    goal_reached = torch.where(distance_to_goal < goal_threshold, 1, 0)
+    velocity_cost = torch.sum(torch.abs(obs_buf[:, 3:6]), dim=-1)/3
+    # goal_reached = torch.where(distance_to_goal < goal_threshold, 1, 0)
+    
+    rewards = torch.zeros_like(distance_reward)
+    rewards += distance_reward
+    # rewards -= actions_cost_scale*actions_cost            # Action Costs don't make sense in Position Control Mode
+    # rewards -= electricity_cost*energy_cost_scale         # Electrical Costs aren't calculated correctly in Position Control Mode
+    rewards -= dof_at_limit_cost
+    rewards -= velocity_cost**2
+    # rewards += near_goal_reward
     # reward = torch.where(distance_to_goal < goal_threshold, reward+1, reward)
     # goal_reset = torch.where(goal_reached==1, 1, 0)
     # goal_reset = torch.where(progress_buf%(max_episode_length/10) == 0, 1, 0)
     goal_reset = torch.zeros_like(reset)
-    reward_comps = [distance_to_goal, 
-                    actions_cost*actions_cost_scale, 
-                    electricity_cost*energy_cost_scale,
-                    dof_at_limit_cost,
-                    near_goal_reward]
+    reward_comps = torch.cat((torch.unsqueeze(rewards,dim=-1), 
+                             torch.unsqueeze(distance_reward,dim=-1),
+                             torch.unsqueeze(-actions_cost*actions_cost_scale,dim=-1), 
+                             torch.unsqueeze(-electricity_cost*energy_cost_scale,dim=-1), 
+                             torch.unsqueeze(-dof_at_limit_cost,dim=-1),
+                             torch.unsqueeze(-velocity_cost,dim=-1)), dim=-1)
+
     return rewards, reset, goal_reset, reward_comps
 
 

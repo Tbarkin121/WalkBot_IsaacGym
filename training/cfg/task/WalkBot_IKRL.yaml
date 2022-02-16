@@ -8,11 +8,9 @@ env:
   numEnvs: ${resolve_default:4096,${...num_envs}}
   envSpacing: 1.0
   maxEpisodeLength: 500
-  debug_mode: False
-  # cost parameters
-  actionsCost: 0.05
-  energyCost: 0.2
-  jointsAtLimitCost: 0.25
+  debug_mode: True
+  her_obs: False
+
 
   clipObservations: 5.0
   clipActions: 1.0
@@ -37,9 +35,10 @@ env:
 
   actuatorParams:
     driveMode: 1          #0 for Torque Control, 1 for Pos Control. This multiplies to stiffness and damping (Both should be 0 for torque control)
-    stiffness: 100.0     #Controller looks like torque=posError*stiffness + velError*damping
+    stiffness: 1000.0     #Controller looks like torque=posError*stiffness + velError*damping
     damping: 10.0
-    maxPosition: 2.09   # +/- 90 deg (this value is set in radians)
+    maxPos_S1:
+    maxPosition: 1.5707   # +/- 90 deg (this value is set in radians)
     maxSpeed: 38          #M228 = 10.89, M077=38
     maxTorque: 0.22       #M228 = 0.52, M077=0.22
     friction: 0.0
@@ -62,6 +61,9 @@ env:
   dofVelocityScale: 0.2
   deathCost: -2.0
   terminationHeight: 0.13 #0.13
+  actionsCost: 0.05
+  energyCost: 0.2
+  jointsAtLimitCost: 0.25
 
 sim:
   dt: 0.0166 # 1/60 s
