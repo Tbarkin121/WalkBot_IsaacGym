@@ -1,10 +1,10 @@
 <package format="2">
-  <name>WalkBot4Leg.SLDASM</name>
+  <name>WalkBot4Leg</name>
   <version>1.0.0</version>
   <description>
-    <p>URDF Description package for WalkBot4Leg.SLDASM</p>
+    <p>URDF Description package for WalkBot4Leg</p>
     <p>This package contains configuration data, 3D models and launch files
-for WalkBot4Leg.SLDASM robot</p>
+for WalkBot4Leg robot</p>
   </description>
   <author>TODO</author>
   <maintainer email="TODO@email.com" />

@@ -3,7 +3,7 @@
     name="model" />
   <param
     name="robot_description"
-    textfile="$(find WalkBot4Leg.SLDASM)/urdf/WalkBot4Leg.SLDASM.urdf" />
+    textfile="$(find WalkBot4Leg)/urdf/WalkBot4Leg.urdf" />
   <node
     name="joint_state_publisher_gui"
     pkg="joint_state_publisher_gui"
@@ -16,5 +16,5 @@
     name="rviz"
     pkg="rviz"
     type="rviz"
-    args="-d $(find WalkBot4Leg.SLDASM)/urdf.rviz" />
+    args="-d $(find WalkBot4Leg)/urdf.rviz" />
 </launch>
