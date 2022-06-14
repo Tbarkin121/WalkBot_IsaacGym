@@ -1,0 +1,743 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="WalkBot4Leg.SLDASM">
+  <link
+    name="Body">
+    <inertial>
+      <origin
+        xyz="8.17357455831693E-06 -8.19433772981849E-07 -0.00300170877774879"
+        rpy="0 0 0" />
+      <mass
+        value="1.03985350556727" />
+      <inertia
+        ixx="0.0013074898058424"
+        ixy="3.36188956864086E-10"
+        ixz="1.60521989431856E-07"
+        iyy="0.00339179073259683"
+        iyz="5.51431836645476E-09"
+        izz="0.00441758469225806" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/Body.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/Body.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="FR1_Servo">
+    <inertial>
+      <origin
+        xyz="6.63024617987562E-05 0.00017480111947784 -0.0318010030269155"
+        rpy="0 0 0" />
+      <mass
+        value="0.0230007365895397" />
+      <inertia
+        ixx="2.85194124414614E-06"
+        ixy="-8.41838748723459E-11"
+        ixz="-1.37683480361865E-09"
+        iyy="3.38038527155297E-06"
+        iyz="2.66636683877571E-09"
+        izz="1.0750315407539E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/FR1_Servo.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/FR1_Servo.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="FR1"
+    type="revolute">
+    <origin
+      xyz="0.071 -0.05 -0.0488561341528267"
+      rpy="0 0 0" />
+    <parent
+      link="Body" />
+    <child
+      link="FR1_Servo" />
+    <axis
+      xyz="1 0 0" />
+    <limit
+      lower="-1.5708"
+      upper="1.5708"
+      effort="0.52"
+      velocity="10.89" />
+  </joint>
+  <link
+    name="FR2_Servo">
+    <inertial>
+      <origin
+        xyz="9.42397503327086E-06 0.000235907986100521 -0.0319962115408565"
+        rpy="0 0 0" />
+      <mass
+        value="0.0226043083522871" />
+      <inertia
+        ixx="2.83878279589868E-06"
+        ixy="-8.29162619229412E-11"
+        ixz="-1.37858113387002E-09"
+        iyy="3.27436167088692E-06"
+        iyz="2.668110084566E-09"
+        izz="1.11333471633781E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/FR2_Servo.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/FR2_Servo.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="FR2"
+    type="revolute">
+    <origin
+      xyz="0 0 -0.0474161341528266"
+      rpy="0 0 0" />
+    <parent
+      link="FR1_Servo" />
+    <child
+      link="FR2_Servo" />
+    <axis
+      xyz="0 -1 0" />
+    <limit
+      lower="-1.5708"
+      upper="1.5708"
+      effort="0.52"
+      velocity="10.89" />
+  </joint>
+  <link
+    name="FR3_Servo">
+    <inertial>
+      <origin
+        xyz="2.80851149281336E-09 8.14892709388171E-05 -0.0246574562466224"
+        rpy="0 0 0" />
+      <mass
+        value="0.0161002375604621" />
+      <inertia
+        ixx="1.4738916006442E-06"
+        ixy="6.80558853864168E-14"
+        ixz="-1.41793132699118E-13"
+        iyy="1.7994604546192E-06"
+        iyz="1.24376477958257E-12"
+        izz="1.23532312259261E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/FR3_Servo.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/FR3_Servo.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="FR3"
+    type="revolute">
+    <origin
+      xyz="0 0 -0.0474161341528267"
+      rpy="0 0 0" />
+    <parent
+      link="FR2_Servo" />
+    <child
+      link="FR3_Servo" />
+    <axis
+      xyz="0 -1 0" />
+    <limit
+      lower="-1.5708"
+      upper="1.5708"
+      effort="0.52"
+      velocity="10.89" />
+  </joint>
+  <link
+    name="FL1_Servo">
+    <inertial>
+      <origin
+        xyz="6.6302E-05 0.0001748 -0.031801"
+        rpy="0 0 0" />
+      <mass
+        value="0.023001" />
+      <inertia
+        ixx="2.8519E-06"
+        ixy="-8.4184E-11"
+        ixz="-1.3768E-09"
+        iyy="3.3804E-06"
+        iyz="2.6664E-09"
+        izz="1.075E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/FL1_Servo.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/FL1_Servo.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="FL1"
+    type="revolute">
+    <origin
+      xyz="0.071 0.05 -0.0488561341528267"
+      rpy="0 0 0" />
+    <parent
+      link="Body" />
+    <child
+      link="FL1_Servo" />
+    <axis
+      xyz="1 0 0" />
+    <limit
+      lower="-1.5708"
+      upper="1.5708"
+      effort="0.52"
+      velocity="10.89" />
+  </joint>
+  <link
+    name="FL2_Servo">
+    <inertial>
+      <origin
+        xyz="9.42397503328474E-06 0.000235907986100507 -0.0319962115408566"
+        rpy="0 0 0" />
+      <mass
+        value="0.0226043083522871" />
+      <inertia
+        ixx="2.83878279589868E-06"
+        ixy="-8.29162619230159E-11"
+        ixz="-1.37858113387108E-09"
+        iyy="3.27436167088692E-06"
+        iyz="2.66811008456632E-09"
+        izz="1.11333471633781E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/FL2_Servo.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/FL2_Servo.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="FL2"
+    type="revolute">
+    <origin
+      xyz="0 0 -0.0474161341528266"
+      rpy="0 0 0" />
+    <parent
+      link="FL1_Servo" />
+    <child
+      link="FL2_Servo" />
+    <axis
+      xyz="0 -1 0" />
+    <limit
+      lower="-1.5708"
+      upper="1.5708"
+      effort="0.52"
+      velocity="10.89" />
+  </joint>
+  <link
+    name="FL3_Servo">
+    <inertial>
+      <origin
+        xyz="2.80851150669115E-09 8.14892709388101E-05 -0.0246574562466224"
+        rpy="0 0 0" />
+      <mass
+        value="0.0161002375604621" />
+      <inertia
+        ixx="1.4738916006442E-06"
+        ixy="6.8055884419266E-14"
+        ixz="-1.41793131300665E-13"
+        iyy="1.7994604546192E-06"
+        iyz="1.24376477968061E-12"
+        izz="1.23532312259261E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/FL3_Servo.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/FL3_Servo.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="FL3"
+    type="revolute">
+    <origin
+      xyz="0 0 -0.0474161341528267"
+      rpy="0 0 0" />
+    <parent
+      link="FL2_Servo" />
+    <child
+      link="FL3_Servo" />
+    <axis
+      xyz="0 -1 0" />
+    <limit
+      lower="-1.5708"
+      upper="1.5708"
+      effort="0.52"
+      velocity="10.89" />
+  </joint>
+  <link
+    name="BR1_Servo">
+    <inertial>
+      <origin
+        xyz="6.6302E-05 0.0001748 -0.031801"
+        rpy="0 0 0" />
+      <mass
+        value="0.023001" />
+      <inertia
+        ixx="2.8519E-06"
+        ixy="-8.4184E-11"
+        ixz="-1.3768E-09"
+        iyy="3.3804E-06"
+        iyz="2.6664E-09"
+        izz="1.075E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/BR1_Servo.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/BR1_Servo.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="BR1"
+    type="revolute">
+    <origin
+      xyz="-0.071 -0.05 -0.0488561341528267"
+      rpy="0 0 0" />
+    <parent
+      link="Body" />
+    <child
+      link="BR1_Servo" />
+    <axis
+      xyz="1 0 0" />
+    <limit
+      lower="-1.5708"
+      upper="1.5708"
+      effort="0.52"
+      velocity="10.89" />
+  </joint>
+  <link
+    name="BR2_Servo">
+    <inertial>
+      <origin
+        xyz="9.42397503334025E-06 0.000235907986100507 -0.0319962115408566"
+        rpy="0 0 0" />
+      <mass
+        value="0.0226043083522871" />
+      <inertia
+        ixx="2.83878279589868E-06"
+        ixy="-8.29162619231824E-11"
+        ixz="-1.37858113386862E-09"
+        iyy="3.27436167088693E-06"
+        iyz="2.66811008456736E-09"
+        izz="1.11333471633782E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/BR2_Servo.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/BR2_Servo.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="BR2"
+    type="revolute">
+    <origin
+      xyz="0 0 -0.0474161341528266"
+      rpy="0 0 0" />
+    <parent
+      link="BR1_Servo" />
+    <child
+      link="BR2_Servo" />
+    <axis
+      xyz="0 -1 0" />
+    <limit
+      lower="-1.5708"
+      upper="1.5708"
+      effort="0.52"
+      velocity="10.89" />
+  </joint>
+  <link
+    name="BR3_Servo">
+    <inertial>
+      <origin
+        xyz="2.8085E-09 8.1489E-05 -0.024657"
+        rpy="0 0 0" />
+      <mass
+        value="0.0161" />
+      <inertia
+        ixx="1.4739E-06"
+        ixy="6.8056E-14"
+        ixz="-1.4179E-13"
+        iyy="1.7995E-06"
+        iyz="1.2438E-12"
+        izz="1.2353E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/BR3_Servo.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/BR3_Servo.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="BR3"
+    type="revolute">
+    <origin
+      xyz="0 0 -0.0474161341528267"
+      rpy="0 0 0" />
+    <parent
+      link="BR2_Servo" />
+    <child
+      link="BR3_Servo" />
+    <axis
+      xyz="0 -1 0" />
+    <limit
+      lower="-1.5708"
+      upper="1.5708"
+      effort="0.52"
+      velocity="10.89" />
+  </joint>
+  <link
+    name="BL1_Servo">
+    <inertial>
+      <origin
+        xyz="6.6302E-05 0.0001748 -0.031801"
+        rpy="0 0 0" />
+      <mass
+        value="0.023001" />
+      <inertia
+        ixx="2.8519E-06"
+        ixy="-8.4184E-11"
+        ixz="-1.3768E-09"
+        iyy="3.3804E-06"
+        iyz="2.6664E-09"
+        izz="1.075E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/BL1_Servo.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/BL1_Servo.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="BL1"
+    type="revolute">
+    <origin
+      xyz="-0.071 0.05 -0.0488561341528267"
+      rpy="0 0 0" />
+    <parent
+      link="Body" />
+    <child
+      link="BL1_Servo" />
+    <axis
+      xyz="1 0 0" />
+    <limit
+      lower="-1.5708"
+      upper="1.5708"
+      effort="0.52"
+      velocity="10.89" />
+  </joint>
+  <link
+    name="BL2_Servo">
+    <inertial>
+      <origin
+        xyz="9.424E-06 0.00023591 -0.031996"
+        rpy="0 0 0" />
+      <mass
+        value="0.022604" />
+      <inertia
+        ixx="2.8388E-06"
+        ixy="-8.2916E-11"
+        ixz="-1.3786E-09"
+        iyy="3.2744E-06"
+        iyz="2.6681E-09"
+        izz="1.1133E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/BL2_Servo.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/BL2_Servo.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="BL2"
+    type="revolute">
+    <origin
+      xyz="0 0 -0.0474161341528266"
+      rpy="0 0 0" />
+    <parent
+      link="BL1_Servo" />
+    <child
+      link="BL2_Servo" />
+    <axis
+      xyz="0 -1 0" />
+    <limit
+      lower="-1.5708"
+      upper="1.5708"
+      effort="0.52"
+      velocity="10.89" />
+  </joint>
+  <link
+    name="BL3_Servo">
+    <inertial>
+      <origin
+        xyz="2.8085E-09 8.1489E-05 -0.024657"
+        rpy="0 0 0" />
+      <mass
+        value="0.0161" />
+      <inertia
+        ixx="1.4739E-06"
+        ixy="6.8056E-14"
+        ixz="-1.4179E-13"
+        iyy="1.7995E-06"
+        iyz="1.2438E-12"
+        izz="1.2353E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/BL3_Servo.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="../meshes/BL3_Servo.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="BL3"
+    type="revolute">
+    <origin
+      xyz="0 0 -0.0474161341528267"
+      rpy="0 0 0" />
+    <parent
+      link="BL2_Servo" />
+    <child
+      link="BL3_Servo" />
+    <axis
+      xyz="0 -1 0" />
+    <limit
+      lower="-1.5708"
+      upper="1.5708"
+      effort="0.52"
+      velocity="10.89" />
+  </joint>
+</robot>
