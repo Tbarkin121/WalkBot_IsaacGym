@@ -33,6 +33,7 @@ from tasks.walkbot_4dof import WalkBot_4DOF
 from tasks.walkbot_hil import WalkBot_HIL
 from tasks.walkbot_imu import WalkBot_IMU
 from tasks.walkbot4leg import WalkBot4Leg
+from tasks.walkbot4leg_long import WalkBot4Leg_Long
 
 # Mappings from strings to environments
 isaacgym_task_map = {
@@ -42,4 +43,5 @@ isaacgym_task_map = {
     "WalkBot_HIL": WalkBot_HIL,
     "WalkBot_IMU": WalkBot_IMU,
     "WalkBot4Leg": WalkBot4Leg,
+    "WalkBot4Leg_Long": WalkBot4Leg_Long,
 }

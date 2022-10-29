@@ -134,7 +134,7 @@ class WalkBot_testing():
         # initial root pose for cartpole actors
         initial_pose = gymapi.Transform()
         initial_pose.p = gymapi.Vec3(0.0, 0.0, 1.0)
-        initial_pose.r = gymapi.Quat(0.5, 0.0, 0.0, 1.0)
+        initial_pose.r = gymapi.Quat(0.0, 0.0, 0.0, 1.0)
 
         # Create environmentself.tensebot_handles = []
         self.box_handles = []
@@ -206,51 +206,108 @@ class WalkBot_testing():
         forces = torch.zeros((self.num_envs, self.num_bodies, 3), device=self.device, dtype=torch.float)
         torques = torch.zeros((self.num_envs, self.num_bodies, 3), device=self.device, dtype=torch.float)
 
+        gravity_vec = to_torch(get_axis_params(-1., self.up_axis_idx), device=self.device).repeat((self.num_envs, 1))
+        
+
         while not self.gym.query_viewer_has_closed(self.viewer):
+            projected_gravity_vec = quat_rotate(self.ori[0, ...], gravity_vec)
+
             self.gym.refresh_force_sensor_tensor(self.sim)
             self.gym.apply_rigid_body_force_tensors(self.sim, gymtorch.unwrap_tensor(forces), gymtorch.unwrap_tensor(torques), gymapi.ENV_SPACE)
+
+            self.gym.clear_lines(self.viewer)
+            print(self.ori.shape)
+            print(self.linvel.shape)
+            base_lin_vel1 = quat_rotate_inverse(self.ori[:,0,...], self.linvel[:,0,...])
+            base_lin_vel2 = quat_rotate(self.ori[:,0,...], self.linvel[:,0,...])
+            num_lines = 1
+            line_vertices = torch.zeros((num_lines*2,3), device=self.device, dtype=torch.float)
+            line_color = torch.tensor((0.0, 1.0, 1.0), device=self.device, dtype=torch.float)
+            line_vertices[0,:] = self.pos[0,:]
+            line_vertices[1,:] = self.pos[0,:]
+            line_vertices[1, 0:3] += self.linvel[0,0, 0:3]
+            self.gym.add_lines(self.viewer, self.envs[0], num_lines, line_vertices.cpu().detach(), line_color.cpu().detach())
+
+            num_lines = 1
+            line_vertices = torch.zeros((num_lines*2,3), device=self.device, dtype=torch.float)
+            line_color = torch.tensor((0.0, 0.0, 1.0), device=self.device, dtype=torch.float)
+            line_vertices[0,:] = self.pos[0,:]
+            line_vertices[1,:] = self.pos[0,:]
+            line_vertices[1, 0:3] += base_lin_vel1[0, 0:3]
+            self.gym.add_lines(self.viewer, self.envs[0], num_lines, line_vertices.cpu().detach(), line_color.cpu().detach())
+
+            # num_lines = 1
+            # line_vertices = torch.zeros((num_lines*2,3), device=self.device, dtype=torch.float)
+            # line_color = torch.tensor((1.0, 0.0, 0.0), device=self.device, dtype=torch.float)
+            # line_vertices[0,:] = self.pos[0,:]
+            # line_vertices[1,:] = self.pos[0,:]
+            # line_vertices[1, 0:3] += base_lin_vel2[0, 0:3]
+            # self.gym.add_lines(self.viewer, self.envs[0], num_lines, line_vertices.cpu().detach(), line_color.cpu().detach())
+
+            num_lines = 1
+            line_vertices = torch.zeros((num_lines*2,3), device=self.device, dtype=torch.float)
+            line_color = torch.tensor((1.0, 0.0, 0.0), device=self.device, dtype=torch.float)
+            line_vertices[0,:] = self.pos[0,:]
+            line_vertices[1,:] = self.pos[0,:]
+            line_vertices[1, 0:3] += gravity_vec[0, 0:3]
+            self.gym.add_lines(self.viewer, self.envs[0], num_lines, line_vertices.cpu().detach(), line_color.cpu().detach())
+            num_lines = 1
+            line_vertices = torch.zeros((num_lines*2,3), device=self.device, dtype=torch.float)
+            line_color = torch.tensor((1.0, 1.0, 0.0), device=self.device, dtype=torch.float)
+            line_vertices[0,:] = self.pos[0,:]
+            line_vertices[1,:] = self.pos[0,:]
+            line_vertices[1, 0:3] += projected_gravity_vec[0, 0:3]
+            self.gym.add_lines(self.viewer, self.envs[0], num_lines, line_vertices.cpu().detach(), line_color.cpu().detach())
+
+
+            camOffset = gymapi.Vec3(0, -0.5, 0.25)
+            camTarget = gymapi.Vec3(self.pos[0, 0, 0],self.pos[0, 0, 1],self.pos[0, 0, 2])
+            # print(camOffset)
+            # print(camTarget)
+            # self.gym.viewer_camera_look_at(self.viewer, None, camOffset+camTarget, camTarget)
+
             for evt in self.gym.query_viewer_action_events(self.viewer):
                 # forces = torch.zeros((self.num_envs, self.num_bodies, 3), device=self.device, dtype=torch.float)
                 # torques = torch.zeros((self.num_envs, self.num_bodies, 3), device=self.device, dtype=torch.float)
-
+                
                 if evt.action == "forward" and evt.value > 0:
-                    forces[:, 0, 0] = torch.tensor([0.001], device=self.device)
+                    forces[:, 0, 0] = torch.tensor([0.005], device=self.device)
                     self.gym.apply_rigid_body_force_tensors(self.sim, gymtorch.unwrap_tensor(forces), gymtorch.unwrap_tensor(torques), gymapi.ENV_SPACE)
 
                 elif (evt.action == "backward") and evt.value > 0:
-                    forces[:, 0, 0] = torch.tensor([-0.001], device=self.device)
+                    forces[:, 0, 0] = torch.tensor([-0.005], device=self.device)
                     self.gym.apply_rigid_body_force_tensors(self.sim, gymtorch.unwrap_tensor(forces), gymtorch.unwrap_tensor(torques), gymapi.ENV_SPACE)                
 
                 elif (evt.action == "left") and evt.value > 0:
-                    forces[:, 0, 1] = torch.tensor([0.001], device=self.device)
+                    forces[:, 0, 1] = torch.tensor([0.005], device=self.device)
                     self.gym.apply_rigid_body_force_tensors(self.sim, gymtorch.unwrap_tensor(forces), gymtorch.unwrap_tensor(torques), gymapi.ENV_SPACE)
 
                 elif (evt.action == "right") and evt.value > 0:
-                    forces[:, 0, 1] = torch.tensor([-0.001], device=self.device)
+                    forces[:, 0, 1] = torch.tensor([-0.005], device=self.device)
                     self.gym.apply_rigid_body_force_tensors(self.sim, gymtorch.unwrap_tensor(forces), gymtorch.unwrap_tensor(torques), gymapi.ENV_SPACE)
 
                 elif (evt.action == "torque1") and evt.value > 0:
-                    torques[:, 0, 0] = torch.tensor([0.00001], device=self.device)
+                    torques[:, 0, 0] = torch.tensor([0.00005], device=self.device)
                     self.gym.apply_rigid_body_force_tensors(self.sim, gymtorch.unwrap_tensor(forces), gymtorch.unwrap_tensor(torques), gymapi.ENV_SPACE)
 
                 elif (evt.action == "torque2") and evt.value > 0:
-                    torques[:, 0, 0] = torch.tensor([-0.00001], device=self.device)
+                    torques[:, 0, 0] = torch.tensor([-0.00005], device=self.device)
                     self.gym.apply_rigid_body_force_tensors(self.sim, gymtorch.unwrap_tensor(forces), gymtorch.unwrap_tensor(torques), gymapi.ENV_SPACE)
 
                 elif (evt.action == "torque3") and evt.value > 0:
-                    torques[:, 0, 1] = torch.tensor([0.00001], device=self.device)
+                    torques[:, 0, 1] = torch.tensor([0.00005], device=self.device)
                     self.gym.apply_rigid_body_force_tensors(self.sim, gymtorch.unwrap_tensor(forces), gymtorch.unwrap_tensor(torques), gymapi.ENV_SPACE)
 
                 elif (evt.action == "torque4") and evt.value > 0:
-                    torques[:, 0, 1] = torch.tensor([-0.00001], device=self.device)
+                    torques[:, 0, 1] = torch.tensor([-0.00005], device=self.device)
                     self.gym.apply_rigid_body_force_tensors(self.sim, gymtorch.unwrap_tensor(forces), gymtorch.unwrap_tensor(torques), gymapi.ENV_SPACE)
 
                 elif (evt.action == "torque5") and evt.value > 0:
-                    torques[:, 0, 2] = torch.tensor([0.00001], device=self.device)
+                    torques[:, 0, 2] = torch.tensor([0.00005], device=self.device)
                     self.gym.apply_rigid_body_force_tensors(self.sim, gymtorch.unwrap_tensor(forces), gymtorch.unwrap_tensor(torques), gymapi.ENV_SPACE)
 
                 elif (evt.action == "torque6") and evt.value > 0:
-                    torques[:, 0, 2] = torch.tensor([-0.00001], device=self.device)
+                    torques[:, 0, 2] = torch.tensor([-0.00005], device=self.device)
                     self.gym.apply_rigid_body_force_tensors(self.sim, gymtorch.unwrap_tensor(forces), gymtorch.unwrap_tensor(torques), gymapi.ENV_SPACE)
 
                 elif (evt.action == "clear") and evt.value > 0:
@@ -273,6 +330,9 @@ class WalkBot_testing():
                                             self.vel_loc,
                                             self.dt)
             os.system('cls||clear')
+            print('gravity_vector = {}'.format(gravity_vec))
+            print(self.ori[0, ...])
+            print('projected_gravity_vector = {}'.format(projected_gravity_vec))
             print('forces = {} \n torques = {}'.format(self.forces, self.torques))
 
             # print('World LinVel = {}'.format(obs[0,:]))

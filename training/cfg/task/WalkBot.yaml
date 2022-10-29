@@ -56,10 +56,12 @@ env:
   deathCost: -2.0
   terminationHeight: 0.13 #0.13
 
+controlFrequencyInv: 8 # 1=60 Hz, 8=480 Hz... I Guess this is a bit arbatrary right now... Might want 'nicer' dts later (1eN) type thing
 sim:
   # dt: 0.0166 # 1/60 s
   dt: 0.002083 # 1/480
-  dt_mod: 8 # For changing the dt to 1/480 s. Scales rewards and episode length
+  dt_mod: 1 # For changing the dt to 1/480 s. Scales rewards and episode length #I think DT_mod was a dumb idea anyways
+  
   substeps: 2
   up_axis: "z"
   use_gpu_pipeline: ${eq:${...pipeline},"gpu"}
